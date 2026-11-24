@@ -168,11 +168,12 @@ const FIGURES = [
             en: "uses needed for a reusable plastic box to beat a disposable tray, depending on the impact measured. Thrown away early, it loses its advantage." },
     src: { fr: "Gallego-Schmid et al., J. Cleaner Production, 2019", en: "Gallego-Schmid et al., J. Cleaner Production, 2019" },
     url: "https://doi.org/10.1016/j.jclepro.2018.11.220" },
-  { num: { fr: "Bac jaune : non", en: "Not recycled" }, wide: true,
-    text: { fr: "En France, une boîte alimentaire rigide ne va pas dans le bac de tri. Elle part aux ordures ménagères, puis à l'incinération ou à l'enfouissement.",
-            en: "In France, a rigid food box does not go in the recycling bin. It goes with household waste, then to incineration or landfill." },
+  { num: { fr: "Bac jaune : non", en: "Not in the recycling bin" }, wide: true,
+    text: { fr: "En France, une boîte alimentaire en plastique rigide ne va pas dans le bac de tri. Elle part en général aux ordures ménagères, qui sont incinérées ou enfouies.",
+            en: "In France, a rigid plastic food box does not go in the recycling bin. It usually goes with household waste, which is incinerated or landfilled." },
     src: { fr: "ADEME, Que faire de mes déchets (2026)", en: "ADEME, French environment agency (2026)" },
-    url: "https://quefairedemesdechets.ademe.fr/categories/emballages/emballages-en-plastique/" }
+    url: "https://quefairedemesdechets.ademe.fr/categories/emballages/emballages-en-plastique/",
+    more: [{ fr: "fiche « Objet en plastique »", en: "\"plastic object\" page", url: "https://quefairedemesdechets.ademe.fr/dechet/objet-en-plastique/" }] }
 ];
 
 /* ---------- Langue ---------- */
@@ -466,6 +467,10 @@ function renderFigures() {
     const p = document.createElement("p"); p.textContent = f.text[lang];
     const s = document.createElement("small"); const a = document.createElement("a");
     a.href = f.url; a.textContent = f.src[lang]; a.rel = "noopener"; s.append(a);
+    for (const m of f.more || []) {
+      const a2 = document.createElement("a"); a2.href = m.url; a2.textContent = m[lang]; a2.rel = "noopener";
+      s.append(", ", a2);
+    }
     d.append(n, p, s); box.append(d);
   }
 }
