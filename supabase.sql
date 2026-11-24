@@ -1,4 +1,4 @@
--- Questionnaire « Un couvercle pour chaque boîte »
+-- Questionnaire « Les couvercles uniques »
 -- À coller dans Supabase > SQL Editor > New query, puis Run.
 --
 -- Principe : n'importe quel visiteur peut AJOUTER une réponse, personne ne peut

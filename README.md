@@ -1,4 +1,4 @@
-# One lid for every box
+# Common lids
 
 Campaign page for a citizen proposal: a few common formats for household food storage containers in the EU, so that any lid of a format fits any box of that format, whatever the brand or material. Height stays free. The model is the EU common charger (Directive (EU) 2022/2380) and the Gastronorm catering standard (EN 631).
 

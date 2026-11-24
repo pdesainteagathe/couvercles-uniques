@@ -12,8 +12,8 @@ const MIN_RESULTS = 30;
 /* ---------- Textes ---------- */
 const T = {
   fr: {
-    title: "Un couvercle pour chaque boîte",
-    brand: "Un couvercle pour chaque boîte",
+    title: "Les couvercles uniques",
+    brand: "Les couvercles uniques",
     nav_problem: "Le problème", nav_idea: "L'idée", nav_height: "Hauteur libre", nav_survey: "Votre avis",
     eyebrow: "Proposition citoyenne européenne",
     hero_title: "Le bon couvercle, sur n'importe quelle boîte.",
@@ -77,8 +77,8 @@ const T = {
     ]
   },
   en: {
-    title: "One lid for every box",
-    brand: "One lid for every box",
+    title: "Common lids",
+    brand: "Common lids",
     nav_problem: "The problem", nav_idea: "The idea", nav_height: "Free height", nav_survey: "Your view",
     eyebrow: "A citizen proposal for Europe",
     hero_title: "The right lid, on any box.",
