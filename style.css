@@ -195,3 +195,5 @@ input[type=range] { width: 100%; accent-color: var(--teal); height: 28px; }
 .ill-lab text { font-size: 13px; font-weight: 800; fill: rgba(30,42,47,.8); text-anchor: middle; dominant-baseline: middle; }
 .ill-dim { font-size: 9.5px; fill: var(--muted); text-anchor: middle; font-weight: 600; }
 .ill-stamp { font-size: 9px; font-weight: 800; fill: #fff; text-anchor: middle; }
+
+.scope { border-left: 4px solid var(--teal); padding: .2rem 0 .2rem .9rem; font-weight: 600; }

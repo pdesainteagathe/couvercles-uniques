@@ -32,6 +32,7 @@ const T = {
     idea_title: "Trois formats communs",
     idea_p1: "Un format est défini par deux choses : les dimensions du bord, vu de dessus, et le profil qui reçoit le couvercle. Un couvercle d'un format ferme toutes les boîtes de ce format, de toute marque et de tout matériau : plastique, verre, inox.",
     idea_p2: "Les fabricants gardent la main sur la hauteur, les matériaux, les couleurs, le système de fermeture et le prix.",
+    idea_scope: "Seules les boîtes de conservation des aliments sont concernées. Les bocaux à couvercle vissé, les bouteilles, les gourdes et les emballages vendus pleins restent hors du champ.",
     idea_ikea: "C'est faisable : IKEA ferme déjà ses boîtes de 1 litre en plastique et en verre avec le même couvercle.", idea_ikea_src: "Voir le produit",
     idea_note: "Proposition de départ, ouverte à discussion. Les dimensions reprennent celles du Gastronorm, utilisé dans les cuisines professionnelles depuis 1964 : elles se combinent sur un plateau sans place perdue.",
     tray_caption: "plateau de 53 × 32,5 cm, sans place perdue",
@@ -96,6 +97,7 @@ const T = {
     idea_title: "Three common formats",
     idea_p1: "A format is defined by two things: the dimensions of the rim, seen from above, and the profile that takes the lid. A lid of one format closes every box of that format, whatever the brand or the material: plastic, glass, steel.",
     idea_p2: "Manufacturers keep control of height, materials, colours, closing system and price.",
+    idea_scope: "Only food storage boxes are concerned. Screw-top jars, bottles, flasks and packaging sold full stay out of scope.",
     idea_ikea: "It can be done: IKEA already closes its 1-litre plastic and glass boxes with the same lid.", idea_ikea_src: "See the product",
     idea_note: "Starting proposal, open for discussion. The dimensions follow Gastronorm, used in professional kitchens since 1964: they combine on a tray with no wasted space.",
     tray_caption: "53 × 32.5 cm tray, no wasted space",
@@ -199,75 +201,115 @@ function move(el, frames, dur, easing = "cubic-bezier(.45,.05,.3,1)") {
 }
 function resetAll(svg) { svg.querySelectorAll("g[id]").forEach(g => g.getAnimations().forEach(a => a.cancel())); }
 
-/* Scènes en perspective cavalière : la profondeur part en diagonale vers le haut à droite. */
-const KX = 0.476, KY = -0.275; // décalage écran par unité de profondeur
+/* Dessin en perspective cavalière : la profondeur part en diagonale vers le haut à droite.
+   Une boîte est une empreinte rectangulaire à coins arrondis, extrudée verticalement. */
+const KX = 0.476, KY = -0.275; // décalage écran par millimètre de profondeur
 const FLOOR = 296;
-const P = pts => pts.map(p => p.map(v => Math.round(v * 10) / 10).join(",")).join(" ");
+const R1 = v => Math.round(v * 10) / 10;
+const D = pts => "M" + pts.map(p => R1(p[0]) + " " + R1(p[1])).join(" L") + " Z";
 
-// Boîte : coin avant-gauche du bas en (x, FLOOR). Renvoie le centre du plan du bord.
-function boxSVG(x, L, W, H, c) {
-  const dx = W * KX, dy = W * KY, top = FLOOR - H;
-  const ix = 6 + 6 * KX, iy = 6 * KY, iL = L - 12, iW = W - 12;
-  const s = `
-    <polygon class="box-stroke" fill="${c.side}" points="${P([[x + L, top], [x + L + dx, top + dy], [x + L + dx, FLOOR + dy], [x + L, FLOOR]])}"/>
-    <polygon class="box-stroke" fill="${c.rim}" points="${P([[x, top], [x + L, top], [x + L + dx, top + dy], [x + dx, top + dy]])}"/>
-    <polygon fill="${c.inside}" points="${P([[x + ix, top + iy], [x + ix + iL, top + iy], [x + ix + iL + iW * KX, top + iy + iW * KY], [x + ix + iW * KX, top + iy + iW * KY]])}"/>
-    <rect class="box-stroke" fill="${c.front}" x="${x}" y="${top}" width="${L}" height="${H}" rx="3"/>`;
-  return { svg: s, cx: x + L / 2 + dx / 2, cy: top + dy / 2, front: [x, top, L, H], side: [x + L, top, dx, dy, H] };
+// Rectangle à coins arrondis dans le plan (u vers la droite, v vers le fond), sens trigonométrique.
+function rr(L, W, r) {
+  r = Math.min(r, L / 2, W / 2);
+  const c = [[L / 2 - r, -W / 2 + r, -90], [L / 2 - r, W / 2 - r, 0], [-L / 2 + r, W / 2 - r, 90], [-L / 2 + r, -W / 2 + r, 180]];
+  const pts = [];
+  for (const [cu, cv, a0] of c) for (let k = 0; k <= 8; k++) {
+    const a = (a0 + k * 90 / 8) * Math.PI / 180; pts.push([cu + r * Math.cos(a), cv + r * Math.sin(a)]);
+  }
+  return pts;
 }
-// Couvercle rectangulaire centré sur (0,0) = centre du plan du bord ; t épaisseur, sk rebord descendant.
-function lidRectSVG(L, W, t, sk, c, letter) {
-  const dx = W * KX, dy = W * KY;
-  const x0 = -L / 2 - dx / 2, y0 = -dy / 2; // avant-gauche, au niveau du bord
-  const s = `
-    <polygon fill="${c.top}" class="box-stroke" points="${P([[x0, y0 - t], [x0 + L, y0 - t], [x0 + L + dx, y0 - t + dy], [x0 + dx, y0 - t + dy]])}"/>
-    <polygon fill="${c.side}" class="box-stroke" points="${P([[x0 + L, y0 - t], [x0 + L + dx, y0 - t + dy], [x0 + L + dx, y0 + sk + dy], [x0 + L, y0 + sk]])}"/>
-    <rect fill="${c.front}" class="box-stroke" x="${x0}" y="${y0 - t}" width="${L}" height="${t + sk}" rx="3"/>
-    ${sk > 0 ? `<rect fill="${c.skirt || c.side}" x="${x0 + 1}" y="${y0}" width="${L - 2}" height="${sk - 1}" rx="2"/>` : ""}
-    ${letter ? `<text class="lid-letter" x="${x0 + L / 2}" y="${y0 + sk - 2.5}">${letter}</text>` : ""}`;
+const proj = (pts, X, Y) => pts.map(([u, v]) => [X + u + v * KX, Y + v * KY]);
+// Volume balayé par une forme convexe descendue de H : contour supérieur du haut, contour inférieur du bas.
+function sweep(top, H) {
+  let iL = 0, iR = 0;
+  top.forEach((p, i) => { if (p[0] < top[iL][0]) iL = i; if (p[0] > top[iR][0]) iR = i; });
+  const chain = (a, b) => { const out = []; for (let i = a; ; i = (i + 1) % top.length) { out.push(top[i]); if (i === b) break; } return out; };
+  const c1 = chain(iL, iR), c2 = chain(iR, iL);
+  const mean = c => c.reduce((s, p) => s + p[1], 0) / c.length;
+  const upper = mean(c1) < mean(c2) ? c1 : c2.slice().reverse();
+  const lower = (mean(c1) < mean(c2) ? c2 : c1.slice().reverse()).map(([x, y]) => [x, y + H]);
+  return upper.concat(lower);
+}
+
+// Nourriture : surface dans l'ouverture, avec quelques éléments ; dans le verre, on voit aussi le volume.
+const FOOD = {
+  salad: { base: "#8cbf5a", side: "#76a84a", bits: [["#5d9c3c", 7], ["#e4572e", 5], ["#f2c14e", 3], ["#5d9c3c", 6], ["#fff4d6", 3]] },
+  pasta: { base: "#f2c14e", side: "#dba63a", bits: [["#e0a72b", 5], ["#c94f2a", 4], ["#e0a72b", 5], ["#7aa34a", 2.5]] },
+  soup:  { base: "#d9532f", side: "#b9431f", bits: [["#f08a5d", 4], ["#fff4d6", 2.5], ["#f08a5d", 3]] }
+};
+let uid = 0;
+function foodSVG(kind, shape) {
+  const f = FOOD[kind], id = "fd" + (++uid);
+  const xs = shape.map(p => p[0]), ys = shape.map(p => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  let s = `<clipPath id="${id}"><path d="${D(shape)}"/></clipPath><g clip-path="url(#${id})"><path d="${D(shape)}" fill="${f.base}"/>`;
+  let seed = 7;
+  const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  for (let i = 0; i < 26; i++) {
+    const [col, r] = f.bits[i % f.bits.length];
+    s += `<ellipse cx="${R1(x0 + rnd() * (x1 - x0))}" cy="${R1(y0 + rnd() * (y1 - y0))}" rx="${r}" ry="${R1(r * .6)}" fill="${col}"/>`;
+  }
+  return s + "</g>";
+}
+
+const MAT = {
+  plastic: { body: "url(#hPlastic)", rim: "#f6b98a", inside: "#d9844e" },
+  glass:   { body: "url(#hGlass)",   rim: "#d6ecf3", inside: "#a9cfdc", glass: true },
+  steel:   { body: "url(#hSteel)",   rim: "#e3e6e9", inside: "#8f979e" }
+};
+// Boîte posée au sol, centre de l'empreinte en (X, Yfloor). Renvoie aussi le centre du plan du bord.
+function boxSVG({ X, Yfloor = FLOOR, L, W, H, r = 16, mat, food, foodLevel = .8 }) {
+  const m = MAT[mat], Y0 = Yfloor - W * -KY / 2;
+  const top = proj(rr(L, W, r), X, Y0 - H);
+  const inner = proj(rr(L - 10, W - 10, r - 5), X, Y0 - H);
+  const body = sweep(top, H);
+  let s = "";
+  if (m.glass && food) {
+    const fh = H * foodLevel, ftop = proj(rr(L - 8, W - 8, r - 4), X, Y0 - fh);
+    s += `<path d="${D(sweep(ftop, fh - 3))}" fill="${FOOD[food].side}"/>`;
+  }
+  s += `<path d="${D(body)}" fill="${m.body}" class="box-stroke"/>
+    <path d="${D(top)}" fill="${m.rim}" class="box-stroke"/>
+    <path d="${D(inner)}" fill="${m.inside}"/>`;
+  if (food) s += foodSVG(food, proj(rr(L - 12, W - 12, r - 6), X, Y0 - H + 7));
+  return { svg: s, cx: X, cy: Y0 - H, body, top, frontX: X - W / 2 * KX };
+}
+// Couvercle centré sur (0,0) = centre du plan du bord ; t épaisseur au-dessus du bord, sk rebord descendant.
+function lidSVG({ L, W, r = 18, t = 7, sk = 0, col, letter }) {
+  const top = proj(rr(L, W, r), 0, -t);
+  let s = `<path d="${D(sweep(top, t + sk))}" fill="${col.band}" class="box-stroke"/>`;
+  s += `<path d="${D(top)}" fill="${col.top}" class="box-stroke"/>`;
+  if (letter) s += `<text class="lid-letter" x="${R1(-W / 2 * KX)}" y="${R1(-t + W / 2 * -KY + (t + sk) / 2 + 3.5)}">${letter}</text>`;
   return s;
 }
-// Couvercle rond : ellipses empilées, vue légèrement de dessus.
-function lidRoundSVG(D, t, sk, c) {
-  const rx = D / 2, ry = D * 0.16;
-  return `<g transform="rotate(-6)">
-    <ellipse cx="0" cy="${sk}" rx="${rx}" ry="${ry}" fill="${c.side}" class="box-stroke"/>
-    <rect x="${-rx}" y="${-t}" width="${2 * rx}" height="${t + sk}" fill="${c.side}"/>
-    <path d="M${-rx} ${-t} V${sk} M${rx} ${-t} V${sk}" class="box-stroke" fill="none"/>
-    <ellipse cx="0" cy="${-t}" rx="${rx}" ry="${ry}" fill="${c.top}" class="box-stroke"/></g>`;
-}
-const COL = {
-  plastic: { front: "url(#gPlastic)", side: "#eaa06c", rim: "#f2a46e", inside: "#d9844e" },
-  glass:   { front: "url(#gGlass)",   side: "#a9cfdc", rim: "#cfe7ef", inside: "#9cc4d2" },
-  steel:   { front: "url(#gSteel)",   side: "#a9b0b7", rim: "#d9dde1", inside: "#8f979e" },
-  std:     { top: "#33a587", front: "#17876d", side: "#0f6553", skirt: "#12755e" },
-  lidS:    { top: "#b6ddb4", front: "#9ccf9a", side: "#7fb57d" },
-  lidR:    { top: "#dcc0e6", front: "#c49bd1", side: "#a77db6" },
-  lidB:    { top: "#a9c9de", front: "#7aa6c2", side: "#5f8ba8" }
+const LID = {
+  std: { top: "#2f9e80", band: "url(#hLid)" },
+  S:   { top: "#b6ddb4", band: "#8cc28a" },
+  R:   { top: "#dcc0e6", band: "#b48ac4" },
+  B:   { top: "#a9c9de", band: "#6f9ab7" }
 };
-const counter = `<polygon points="0,${FLOOR + 6} 800,${FLOOR + 6} 800,${FLOOR - 52} 0,${FLOOR - 52}" fill="#f3ece1"/>
-  <line x1="0" y1="${FLOOR + 6.5}" x2="800" y2="${FLOOR + 6.5}" class="floor"/>`;
-const wrap = (id, x, y, inner, extra = "") => `<g transform="translate(${x} ${y})" ${extra}><g id="${id}">${inner}</g></g>`;
+const counter = `<path d="M0 ${FLOOR + 8} H800 V${FLOOR - 56} H0 Z" fill="#f3ece1"/>
+  <line x1="0" y1="${FLOOR + 8.5}" x2="800" y2="${FLOOR + 8.5}" class="floor"/>`;
+const wrap = (id, x, y, inner) => `<g transform="translate(${x} ${y})"><g id="${id}">${inner}</g></g>`;
 
 // ----- Scène A : aujourd'hui
-const A = { box: boxSVG(320, 150, 100, 82, COL.plastic) };
-A.rest = { "a-lidB": [150, 280], "a-lidR": [150, 262], "a-lidS": [150, 245] };
+const A = { box: boxSVG({ X: 405, L: 150, W: 100, H: 82, r: 18, mat: "plastic", food: "salad" }) };
+A.rest = { "a-lidB": [150, 270], "a-lidR": [150, 255], "a-lidS": [150, 241] };
 A.target = [A.box.cx, A.box.cy];
 (function buildA() {
-  const f = A.box.front, sd = A.box.side;
-  // le petit couvercle disparaît derrière la façade et le flanc quand il tombe dans la boîte
-  const hole = `M0 0H800V400H0Z M${f[0]} ${f[1]}H${f[0] + f[2]}L${sd[0] + sd[2]} ${sd[1] + sd[3]}V${sd[1] + sd[3] + sd[4]}L${sd[0]} ${f[1] + f[3]}H${f[0]}Z`;
+  // le petit couvercle disparaît derrière les parois quand il tombe dans la boîte (règle pair-impair)
+  const hole = `M-50 0H850V420H-50Z ${D(A.box.body)} ${D(A.box.top)}`;
   $("scene-a").innerHTML = `${counter}
-    <defs><clipPath id="clipBox" clipPathUnits="userSpaceOnUse"><path clip-rule="evenodd" d="${hole}"/></clipPath></defs>
+    <defs><clipPath id="clipBox"><path clip-rule="evenodd" d="${hole}"/></clipPath></defs>
     <g class="bin">
       <path d="M642 228 L654 298 A36 8 0 0 0 726 298 L738 228 Z" class="bin-body"/>
       <path d="M664 244 l4 46 M690 246 v46 M716 244 l-4 46" class="bin-lines"/>
       <g id="a-binlid"><ellipse cx="690" cy="226" rx="52" ry="11" class="bin-lid"/><rect x="680" y="212" width="20" height="9" rx="3" class="bin-lid"/></g>
     </g>
     <g id="a-box">${A.box.svg}</g>
-    ${wrap("a-lidB", ...A.rest["a-lidB"], lidRectSVG(196, 128, 7, 7, COL.lidB))}
-    ${wrap("a-lidR", ...A.rest["a-lidR"], lidRoundSVG(150, 7, 6, COL.lidR))}
-    <g clip-path="url(#clipBox)">${wrap("a-lidS", ...A.rest["a-lidS"], lidRectSVG(104, 66, 7, 6, COL.lidS))}</g>
+    ${wrap("a-lidB", ...A.rest["a-lidB"], lidSVG({ L: 196, W: 128, r: 22, sk: 7, col: LID.B }))}
+    ${wrap("a-lidR", ...A.rest["a-lidR"], lidSVG({ L: 138, W: 138, r: 69, sk: 6, col: LID.R }))}
+    <g clip-path="url(#clipBox)">${wrap("a-lidS", ...A.rest["a-lidS"], lidSVG({ L: 104, W: 66, r: 14, sk: 6, col: LID.S }))}</g>
     <g id="a-mark" class="mark bad" opacity="0"><circle cx="${A.target[0]}" cy="125" r="20"/><path d="M${A.target[0] - 9} 116 l18 18 M${A.target[0] + 9} 116 l-18 18"/></g>`;
 })();
 const offA = (id, x, y) => `translate(${x - A.rest[id][0]}px, ${y - A.rest[id][1]}px)`;
@@ -280,56 +322,52 @@ async function sceneA(token) {
   const fail = async () => { await move(mark, [{ opacity: 0 }, { opacity: 1 }], 150); await wait(550); await move(mark, [{ opacity: 1 }, { opacity: 0 }], 200); };
   caption("a1"); await wait(1100); if (!ok()) return;
 
-  // trop petit : tombe dans la boîte
-  caption("a2");
+  caption("a2"); // trop petit : tombe dans la boîte
   await move(S, [{ transform: "none" }, { transform: offA("a-lidS", tx, ty - 70) }], 750);
-  await move(S, [{ transform: offA("a-lidS", tx, ty - 70) }, { transform: offA("a-lidS", tx + 4, ty + 26) + " rotate(9deg)" }], 420, "cubic-bezier(.5,0,1,1)");
+  await move(S, [{ transform: offA("a-lidS", tx, ty - 70) }, { transform: offA("a-lidS", tx + 4, ty + 24) + " rotate(9deg)" }], 420, "cubic-bezier(.5,0,1,1)");
   if (!ok()) return; await fail();
-  await move(S, [{ transform: offA("a-lidS", tx + 4, ty + 26) + " rotate(9deg)" }, { transform: offA("a-lidS", tx, ty - 70) }, { transform: "none" }], 950);
+  await move(S, [{ transform: offA("a-lidS", tx + 4, ty + 24) + " rotate(9deg)" }, { transform: offA("a-lidS", tx, ty - 70) }, { transform: "none" }], 950);
   if (!ok()) return;
 
-  // rond sur rectangulaire : bascule et ne ferme rien
-  caption("a3");
+  caption("a3"); // rond sur rectangulaire : bascule et ne ferme rien
   await move(R, [{ transform: "none" }, { transform: offA("a-lidR", tx, ty - 70) }], 750);
-  await move(R, [{ transform: offA("a-lidR", tx, ty - 70) }, { transform: offA("a-lidR", tx, ty - 4) }], 340, "cubic-bezier(.5,0,1,1)");
+  await move(R, [{ transform: offA("a-lidR", tx, ty - 70) }, { transform: offA("a-lidR", tx, ty - 3) }], 340, "cubic-bezier(.5,0,1,1)");
   if (!ok()) return;
-  await move(R, [{ transform: offA("a-lidR", tx, ty - 4) }, { transform: offA("a-lidR", tx + 6, ty - 10) + " rotate(-9deg)" },
+  await move(R, [{ transform: offA("a-lidR", tx, ty - 3) }, { transform: offA("a-lidR", tx + 6, ty - 10) + " rotate(-9deg)" },
                  { transform: offA("a-lidR", tx - 4, ty - 4) + " rotate(6deg)" }, { transform: offA("a-lidR", tx + 3, ty - 8) + " rotate(-5deg)" }], 800, "ease-out");
   await fail(); if (!ok()) return;
   await move(R, [{ transform: offA("a-lidR", tx + 3, ty - 8) + " rotate(-5deg)" }, { transform: "none" }], 850);
   if (!ok()) return;
 
-  // trop grand : glisse et tombe
-  caption("a4");
+  caption("a4"); // trop grand : glisse et tombe
   await move(B, [{ transform: "none" }, { transform: offA("a-lidB", tx, ty - 70) }], 750);
   await move(B, [{ transform: offA("a-lidB", tx, ty - 70) }, { transform: offA("a-lidB", tx, ty + 2) }], 340, "cubic-bezier(.5,0,1,1)");
   if (!ok()) return;
   await move(B, [{ transform: offA("a-lidB", tx, ty + 2) }, { transform: offA("a-lidB", tx + 70, ty + 30) + " rotate(22deg)" },
-                 { transform: offA("a-lidB", tx + 95, 282) + " rotate(3deg)" }], 650, "ease-in");
+                 { transform: offA("a-lidB", tx + 95, 280) + " rotate(3deg)" }], 650, "ease-in");
   await fail(); if (!ok()) return;
-  await move(B, [{ transform: offA("a-lidB", tx + 95, 282) + " rotate(3deg)" }, { transform: "none" }], 850);
+  await move(B, [{ transform: offA("a-lidB", tx + 95, 280) + " rotate(3deg)" }, { transform: "none" }], 850);
   if (!ok()) return;
 
-  // la boîte part à la poubelle
-  caption("a5");
+  caption("a5"); // la boîte part à la poubelle
   await move(binlid, [{ transform: "none" }, { transform: "translate(-30px,-20px) rotate(-30deg)" }], 400);
-  await move(box, [{ transform: "none" }, { transform: "translate(150px,-120px) rotate(16deg)" }, { transform: "translate(300px,-90px) rotate(34deg) scale(.8)" },
-                   { transform: "translate(315px,-10px) rotate(40deg) scale(.6)", opacity: 0 }], 1600, "ease-in-out");
+  await move(box, [{ transform: "none" }, { transform: "translate(140px,-120px) rotate(16deg)" }, { transform: "translate(290px,-90px) rotate(34deg) scale(.8)" },
+                   { transform: "translate(295px,-10px) rotate(40deg) scale(.6)", opacity: 0 }], 1600, "ease-in-out");
   await move(binlid, [{ transform: "translate(-30px,-20px) rotate(-30deg)" }, { transform: "none" }], 350);
 }
 
 // ----- Scène B : formats communs
 const Bx = [
-  { box: boxSVG(90, 150, 100, 55, COL.glass), tag: "b_glass", letter: "A" },
-  { box: boxSVG(320, 150, 100, 95, COL.plastic), tag: "b_plastic", letter: "B" },
-  { box: boxSVG(550, 150, 100, 140, COL.steel), tag: "b_steel", letter: "C" }
+  { box: boxSVG({ X: 165, L: 150, W: 100, H: 60, mat: "glass", food: "salad", foodLevel: .78 }), tag: "b_glass", letter: "A" },
+  { box: boxSVG({ X: 400, L: 150, W: 100, H: 95, mat: "plastic", food: "pasta" }), tag: "b_plastic", letter: "B" },
+  { box: boxSVG({ X: 635, L: 150, W: 100, H: 140, mat: "steel", food: "soup" }), tag: "b_steel", letter: "C" }
 ];
 (function buildB() {
   $("scene-b").innerHTML = `${counter}
     ${Bx.map(b => b.box.svg).join("")}
-    ${Bx.map((b, i) => `<text x="${b.box.front[0] + 75}" y="${FLOOR + 24}" class="tag" data-i18n="${b.tag}"></text>`).join("")}
-    ${Bx.map((b, i) => wrap("b-lid" + (i + 1), b.box.cx, b.box.cy, lidRectSVG(156, 106, 7, 10, COL.std, b.letter))).join("")}
-    <g id="b-checks" opacity="0">${Bx.map(b => `<g class="mark good"><circle cx="${b.box.cx}" cy="${b.box.cy - 42}" r="16"/><path d="M${b.box.cx - 8} ${b.box.cy - 42} l6 6 l11 -12"/></g>`).join("")}</g>`;
+    ${Bx.map(b => `<text x="${R1(b.box.frontX)}" y="${FLOOR + 26}" class="tag" data-i18n="${b.tag}"></text>`).join("")}
+    ${Bx.map((b, i) => wrap("b-lid" + (i + 1), b.box.cx, b.box.cy, lidSVG({ L: 158, W: 108, r: 22, t: 6, sk: 11, col: LID.std, letter: b.letter }))).join("")}
+    <g id="b-checks" opacity="0">${Bx.map(b => `<g class="mark good"><circle cx="${b.box.cx}" cy="${b.box.cy - 44}" r="16"/><path d="M${b.box.cx - 8} ${b.box.cy - 44} l6 6 l11 -12"/></g>`).join("")}</g>`;
 })();
 
 async function sceneB(token) {
@@ -339,7 +377,7 @@ async function sceneB(token) {
   const checks = $("b-checks");
   L.forEach((l, i) => l.animate([{ transform: `translate(0, ${-Bx[i].box.cy - 40}px)` }], { duration: 1, fill: "forwards" }));
   checks.animate([{ opacity: 0 }], { duration: 1, fill: "forwards" });
-  caption("b1"); await wait(1500); if (!ok()) return;
+  caption("b1"); await wait(1700); if (!ok()) return;
   caption("b2");
   for (const [i, l] of L.entries()) {
     const y0 = -Bx[i].box.cy - 40;
@@ -350,8 +388,7 @@ async function sceneB(token) {
   await move(checks, [{ opacity: 0 }, { opacity: 1 }], 300);
   await wait(1200); if (!ok()) return;
   await move(checks, [{ opacity: 1 }, { opacity: 0 }], 250);
-  caption("b3");
-  // échange : A sur la boîte en inox, C sur la boîte en verre
+  caption("b3"); // échange : A sur la boîte en inox, C sur la boîte en verre
   const dx = Bx[2].box.cx - Bx[0].box.cx, dy = Bx[2].box.cy - Bx[0].box.cy;
   move(L[0], [{ transform: "none" }, { transform: "translate(0px, -110px)" }, { transform: `translate(${dx}px, ${dy - 70}px)` }, { transform: `translate(${dx}px, ${dy}px)` }], 1600);
   await move(L[2], [{ transform: "none" }, { transform: "translate(0px, -50px)" }, { transform: `translate(${-dx}px, ${-dy - 130}px)` }, { transform: `translate(${-dx}px, ${-dy}px)` }], 1600);
@@ -409,23 +446,14 @@ function updateHeight() {
   const nf = new Intl.NumberFormat(lang === "fr" ? "fr-FR" : "en-GB", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
   $("hval").textContent = `${nf.format(h / 10)} ${t("cm")}`;
   $("vol").textContent = `${nf.format(litres)} ${t("litre")}`;
-  // perspective cavalière : la profondeur W part en diagonale, 1 mm = 1 unité en façade
-  const k = 0.55, dx = W * k * Math.cos(Math.PI / 6), dy = -W * k * Math.sin(Math.PI / 6);
-  const floor = 290, x = (420 - L - dx - 60) / 2, top = floor - h, lt = 7, o = 3, sk = 10; // sk : rebord descendant qui recouvre le haut de la boîte
-  const P = pts => pts.map(p => p.join(",")).join(" ");
-  $("hdraw").innerHTML = `
-    <polygon class="box-stroke" fill="#eaa06c" points="${P([[x + L, top], [x + L + dx, top + dy], [x + L + dx, floor + dy], [x + L, floor]])}"/>
-    <rect class="box-stroke" fill="url(#gPlastic)" x="${x}" y="${top}" width="${L}" height="${h}" rx="4"/>
-    <rect class="box-stroke" fill="#f2a46e" x="${x - 1}" y="${top}" width="${L + 2}" height="8" rx="2"/>
-    <g class="lid-std">
-      <polygon points="${P([[x - o, top - lt], [x + L + o, top - lt], [x + L + o + dx, top - lt + dy], [x - o + dx, top - lt + dy]])}" class="lid-top-face"/>
-      <polygon points="${P([[x + L + o, top - lt], [x + L + o + dx, top - lt + dy], [x + L + o + dx, top + sk + dy], [x + L + o, top + sk]])}" class="lid-side"/>
-      <rect x="${x - o}" y="${top - lt}" width="${L + 2 * o}" height="${lt + sk}" rx="3"/>
-      <rect x="${x - o}" y="${top}" width="${L + 2 * o}" height="${sk}" rx="2" class="skirt"/>
-    </g>
-    <text class="hdim" x="${x + L / 2}" y="${floor + 24}">${L} mm</text>
-    <text class="hdim start" x="${x + L + dx + 6}" y="${floor + dy / 2 + 4}">${W} mm</text>
-    <text class="hdim strong" x="${x + L / 2}" y="${top + sk + (h - sk) / 2 + 5}">${h} mm</text>`;
+  // même rendu que l'animation : empreinte arrondie, couvercle à rebord descendant, pâtes dedans
+  const floor = 290, X = 205, W2 = W * -KY / 2;
+  const b = boxSVG({ X, Yfloor: floor, L, W, H: h, r: 20, mat: "plastic", food: "pasta" });
+  const lid = lidSVG({ L: L + 8, W: W + 8, r: 24, t: 6, sk: 11, col: LID.std });
+  $("hdraw").innerHTML = b.svg + `<g transform="translate(${b.cx} ${b.cy})">${lid}</g>
+    <text class="hdim" x="${R1(b.frontX)}" y="${floor + 24}">${L} mm</text>
+    <text class="hdim start" x="${R1(X + L / 2 + W / 2 * KX + 10)}" y="${R1(floor - W2 - 6)}">${W} mm</text>
+    <text class="hdim strong" x="${R1(b.frontX)}" y="${R1(floor - h / 2 + 10)}">${h} mm</text>`;
 }
 $("hslider").addEventListener("input", updateHeight);
 document.querySelectorAll(".fmt-pick button").forEach(b => b.addEventListener("click", () => {
