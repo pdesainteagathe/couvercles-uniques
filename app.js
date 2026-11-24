@@ -7,7 +7,7 @@
 const SUPABASE_URL = "https://luwvrprsgnzywyzsweqv.supabase.co";
 const SUPABASE_KEY = "sb_publishable_gkZrpFHZ5rHatHc56LPn3Q_FGYnHQAh";
 // Les résultats ne s'affichent qu'à partir de ce nombre de réponses.
-const MIN_RESULTS = 30;
+const MIN_RESULTS = 5;
 
 /* ---------- Textes ---------- */
 const T = {
@@ -64,7 +64,7 @@ const T = {
     st_2_d: "Prochaine étape",
     st_2: "Trouver un député ou une sénatrice pour déposer la résolution, et un eurodéputé pour interroger la Commission.",
     st_docs: "Textes complets :", doc_act: "projet d'acte délégué", doc_pre: "proposition de résolution européenne", doc_act_en: "draft delegated act (EN)",
-    foot: "Proposition portée par le Collectif pour le couvercle unique. Code source ouvert.",
+    foot: "Proposition portée par le Collectif pour le couvercle unique. Code sous licence MIT, textes sous licence CC BY 4.0.",
     litre: "l", cm: "cm", dk: "Je ne sais pas",
     q: [
       { id: "owned", text: "Combien de boîtes de conservation avez-vous chez vous, à peu près ?", opts: ["0 à 5", "6 à 10", "11 à 20", "21 à 40", "Plus de 40"] },
@@ -129,7 +129,7 @@ const T = {
     st_2_d: "Next step",
     st_2: "Find a French MP or senator to table the resolution, and an MEP to question the Commission.",
     st_docs: "Full texts:", doc_act: "draft delegated act (FR)", doc_pre: "European resolution (FR)", doc_act_en: "draft delegated act (EN)",
-    foot: "A proposal by the Common Lid Collective. Open source.",
+    foot: "A proposal by the Common Lid Collective. Code under the MIT licence, texts under CC BY 4.0.",
     litre: "L", cm: "cm", dk: "Don't know",
     q: [
       { id: "owned", text: "Roughly how many food storage boxes do you have at home?", opts: ["0 to 5", "6 to 10", "11 to 20", "21 to 40", "More than 40"] },
