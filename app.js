@@ -504,7 +504,7 @@ const RICE = (() => {
 function closureSVG(kind) {
   const box = `${RICE}<path d="M70 100 V64 Q70 62 72 62 H88 Q90 62 90 64 V68 Q90 70 88 70 H80 Q78 70 78 72 V100 Z" class="cl-box"/>`;
   // chaque marque son épaisseur et sa couleur : la compatibilité ne tient qu'à la lèvre
-  const lidPlate = (y, h, cls) => `<rect x="20" y="${y}" width="78" height="${h}" rx="${R1(h / 2.4)}" class="${cls}"/>`;
+  const lidPlate = (y, h, cls) => `<rect x="20" y="${y}" width="74" height="${h}" rx="${R1(h / 2.4)}" class="${cls}"/>`;
   let lid = "";
   if (kind === "press") lid =
     // plastique souple qui épouse le bord : dessus de la paroi, face extérieure de la lèvre, et dessous
@@ -512,8 +512,8 @@ function closureSVG(kind) {
   if (kind === "clips") lid = lidPlate(47, 9, "cl-lid clips") +
     `<rect x="70" y="56" width="18" height="6" rx="3" class="cl-seal"/>` +
     // charnière fine au bord du couvercle, clapet avec crochet sous la lèvre et ergot de préhension
-    `<path d="M98 51 q3 0 3 3" class="cl-hinge"/>
-     <path d="M98 56 h6 V84 l6 9 -3 2 -8 -9 V77 H84 v-5 h14 Z" class="cl-clip"/>`;
+    `<path d="M94 51 q3 0 3 3" class="cl-hinge"/>
+     <path d="M92 56 H98 V84 l6 9 -3 2 -9 -9 V76 H82 V71 H92 Z" class="cl-clip"/>`;
   if (kind === "glass") lid = `<rect x="20" y="49" width="72" height="13" rx="2" class="cl-glass"/>` +
     // bordure en silicone qui coiffe la lèvre, sans verrou
     `<path d="M86 48 H96 q3 0 3 3 V72 H91 V62 H86 Z" class="cl-band"/>`;
