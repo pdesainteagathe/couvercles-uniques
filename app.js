@@ -14,7 +14,11 @@ const T = {
   fr: {
     title: "Les couvercles uniques",
     brand: "Les couvercles uniques",
-    nav_problem: "Le problème", nav_idea: "L'idée", nav_height: "Hauteur libre", nav_survey: "Votre avis",
+    tx_title: "Les textes", tx_intro: "Deux textes prêts à l'emploi, mis à jour le 24 novembre 2026. Les valeurs entre crochets restent ouvertes à la discussion.",
+    tx_act_h: "Projet d'acte délégué", tx_act_p: "Le règlement que la Commission européenne pourrait adopter dans le cadre du règlement écoconception (ESPR)\u00a0: trois formats communs, hauteur libre, tous matériaux.",
+    tx_pre_h: "Proposition de résolution européenne", tx_pre_p: "Le texte qu'un député ou une sénatrice peut déposer pour demander au Gouvernement de porter le projet à Bruxelles.",
+    tx_fr: "Lire en français (PDF)", tx_en: "Read in English (PDF)",
+    nav_problem: "Le problème", nav_texts: "Les textes", nav_idea: "L'idée", nav_height: "Hauteur libre", nav_survey: "Votre avis",
     eyebrow: "Proposition citoyenne européenne",
     hero_title: "Le bon couvercle, sur n'importe quelle boîte.",
     hero_lead: "Quelques formats communs pour les boîtes de conservation alimentaire en Europe, comme l'USB-C pour les chargeurs. Un couvercle perdu ne condamnerait plus sa boîte.",
@@ -63,7 +67,7 @@ const T = {
     st_1: "Projet d'acte délégué et proposition de résolution européenne rédigés, puis envoyés à des parlementaires français et européens et à des associations.",
     st_2_d: "Prochaine étape",
     st_2: "Trouver un député ou une sénatrice pour déposer la résolution, et un eurodéputé pour interroger la Commission.",
-    st_docs: "Textes complets :", doc_act: "projet d'acte délégué", doc_pre: "proposition de résolution européenne", doc_act_en: "draft delegated act (EN)",
+    st_docs: "Les textes complets sont plus haut, dans la section « Les textes ».", doc_act: "projet d'acte délégué", doc_pre: "proposition de résolution européenne", doc_act_en: "draft delegated act (EN)",
     foot: "Proposition portée par le Collectif pour le couvercle unique. Code sous licence MIT, textes sous licence CC BY 4.0.",
     litre: "l", cm: "cm", dk: "Je ne sais pas",
     q: [
@@ -79,7 +83,11 @@ const T = {
   en: {
     title: "Common lids",
     brand: "Common lids",
-    nav_problem: "The problem", nav_idea: "The idea", nav_height: "Free height", nav_survey: "Your view",
+    tx_title: "The texts", tx_intro: "Two ready-to-use texts, updated on 24 November 2026. Values in square brackets remain open for discussion.",
+    tx_act_h: "Draft delegated act", tx_act_p: "The regulation the European Commission could adopt under the Ecodesign for Sustainable Products Regulation (ESPR): three common formats, free height, all materials.",
+    tx_pre_h: "Draft European resolution", tx_pre_p: "The text a French MP or senator can table to ask the Government to carry the project to Brussels. French only.",
+    tx_fr: "Lire en français (PDF)", tx_en: "Read in English (PDF)",
+    nav_problem: "The problem", nav_texts: "The texts", nav_idea: "The idea", nav_height: "Free height", nav_survey: "Your view",
     eyebrow: "A citizen proposal for Europe",
     hero_title: "The right lid, on any box.",
     hero_lead: "A few common formats for food storage containers in Europe, like USB-C for chargers. A lost lid would no longer doom its box.",
@@ -128,7 +136,7 @@ const T = {
     st_1: "Draft delegated act and European resolution written, then sent to French and European lawmakers and to NGOs.",
     st_2_d: "Next step",
     st_2: "Find a French MP or senator to table the resolution, and an MEP to question the Commission.",
-    st_docs: "Full texts:", doc_act: "draft delegated act (FR)", doc_pre: "European resolution (FR)", doc_act_en: "draft delegated act (EN)",
+    st_docs: "The full texts are above, in the section \"The texts\".", doc_act: "draft delegated act (FR)", doc_pre: "European resolution (FR)", doc_act_en: "draft delegated act (EN)",
     foot: "A proposal by the Common Lid Collective. Code under the MIT licence, texts under CC BY 4.0.",
     litre: "L", cm: "cm", dk: "Don't know",
     q: [
@@ -168,7 +176,7 @@ const FIGURES = [
 ];
 
 /* ---------- Langue ---------- */
-let lang = localStorage.getItem("lang") || ((navigator.language || "fr").toLowerCase().startsWith("fr") ? "fr" : "en");
+let lang = localStorage.getItem("lang") === "en" ? "en" : "fr"; // français par défaut, anglais seulement sur choix du visiteur
 const t = k => T[lang][k];
 
 function applyLang() {
