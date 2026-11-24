@@ -26,7 +26,7 @@ const T = {
     tab_today: "Aujourd'hui", tab_tomorrow: "Avec des formats communs",
     replay: "Rejouer",
     a1: "Une boîte, trois couvercles.", a2: "Trop petit.", a3: "Rond, sur une boîte rectangulaire.", a4: "Trop grand.",
-    a5: "Une boîte de plus sans couvercle. La pile grandit.",
+    a5: "Une boîte de plus sans couvercle. Le tas grandit.",
     b1: "Trois boîtes du même format : trois hauteurs, trois matériaux.", b2: "Un couvercle de ce format les ferme toutes.",
     b3: "Et les couvercles s'échangent.",
     b_glass: "verre", b_plastic: "plastique", b_steel: "inox",
@@ -95,7 +95,7 @@ const T = {
     tab_today: "Today", tab_tomorrow: "With common formats",
     replay: "Replay",
     a1: "One box, three lids.", a2: "Too small.", a3: "Round, on a rectangular box.", a4: "Too big.",
-    a5: "One more box without a lid. The pile grows.",
+    a5: "One more box without a lid. The heap grows.",
     b1: "Three boxes of the same format: three heights, three materials.", b2: "One lid of that format closes them all.",
     b3: "And the lids swap freely.",
     b_glass: "glass", b_plastic: "plastic", b_steel: "steel",
@@ -304,33 +304,32 @@ const wrap = (id, x, y, inner) => `<g transform="translate(${x} ${y})"><g id="${
 const A = { box: boxSVG({ X: 405, L: 150, W: 100, H: 82, r: 18, mat: "plastic", food: "salad" }) };
 A.rest = { "a-lidB": [150, 270], "a-lidR": [150, 255], "a-lidS": [150, 241] };
 A.target = [A.box.cx, A.box.cy];
-// Au fond : la pile des boîtes sans couvercle, petite et pâle parce que lointaine.
-const PILE = (() => {
-  const out = [], mats = ["plastic", "glass", "steel", "plastic", "steel", "plastic"];
-  const rows = [[672, 716, 760], [694, 738], [716]];          // centres des empreintes, rangée par rangée
-  let k = 0;
-  rows.forEach((xs, row) => xs.forEach(x => out.push({ x, y: 252 - row * 19, mat: mats[k++ % mats.length] })));
-  // boîtes qui arrivent ensuite, posées par-dessus
-  [[683, 214], [727, 214], [705, 195], [749, 233], [662, 233], [738, 195], [716, 176]]
-    .forEach(([x, y], i) => out.push({ x, y, mat: mats[(i + 2) % mats.length], late: true }));
-  return out;
-})();
-const pileBox = p => boxSVG({ X: p.x, Yfloor: p.y, L: 40, W: 26, H: 17, r: 6, mat: p.mat }).svg;
+// Au fond : un tas de boîtes dépareillées, jetées en vrac, petit et pâle parce que lointain.
+// [x, sol, longueur, largeur, hauteur, rayon d'angle, rotation, matière] ; rayon = largeur / 2 : boîte ronde
+const PILE = [
+  [668, 255, 44, 28, 16, 6, -4, "plastic"], [712, 257, 34, 34, 20, 17, 0, "glass"], [754, 254, 50, 30, 14, 8, 3, "steel"],
+  [686, 238, 38, 24, 18, 5, -14, "steel"], [731, 237, 46, 30, 15, 9, 10, "plastic"], [771, 241, 30, 30, 16, 15, -6, "plastic"],
+  [708, 221, 42, 26, 14, 7, -22, "glass"], [750, 222, 32, 32, 18, 16, 18, "steel"], [727, 205, 40, 24, 16, 6, -8, "plastic"],
+  // boîtes qui arrivent ensuite
+  [695, 205, 36, 22, 14, 5, 25, "steel", 1], [763, 207, 44, 28, 13, 8, -15, "glass", 1], [716, 190, 30, 30, 15, 15, 6, "plastic", 1],
+  [745, 191, 38, 24, 14, 6, -20, "steel", 1], [676, 222, 40, 26, 15, 6, -32, "plastic", 1], [732, 175, 34, 22, 13, 5, 12, "glass", 1],
+  [777, 224, 28, 28, 14, 14, 30, "plastic", 1]
+].map(([x, y, L, W, H, r, rot, mat, late]) => ({ x, y, L, W, H, r, rot, mat, late: !!late }));
+const pileBox = p => `<g transform="rotate(${p.rot} ${p.x} ${R1(p.y - p.H / 2 - p.W * -KY / 2)})">${boxSVG({ X: p.x, Yfloor: p.y, L: p.L, W: p.W, H: p.H, r: p.r, mat: p.mat }).svg}</g>`;
 (function buildA() {
   // le petit couvercle disparaît derrière les parois quand il tombe dans la boîte (règle pair-impair)
   const hole = `M-50 0H850V420H-50Z ${D(A.box.body)} ${D(A.box.top)}`;
   $("scene-a").innerHTML = `${counter}
     <defs><clipPath id="clipBox"><path clip-rule="evenodd" d="${hole}"/></clipPath></defs>
     <g class="pile">${PILE.map((p, i) => p.late ? `<g id="a-pile${i}" opacity="0">${pileBox(p)}</g>` : pileBox(p)).join("")}</g>
-    <g class="person">
+    <g id="a-person" class="person" opacity="0">
       <path d="M598 296 l3 -52 M622 296 l-3 -52" class="leg"/>
       <path d="M586 252 q0 -52 24 -52 q24 0 24 52 z" class="shirt"/>
       <path d="M590 214 q-14 18 -2 30 l14 -6 M630 214 q14 18 2 30 l-14 -6" class="arm"/>
       <circle cx="610" cy="182" r="17" class="skin"/>
       <path d="M593 178 q2 -20 17 -20 q16 0 17 18 q-9 -9 -22 -8 q-8 1 -12 10 z" class="hair"/>
       <circle cx="604" cy="183" r="1.8" class="eye"/><circle cx="616" cy="183" r="1.8" class="eye"/>
-      <g id="a-calm"><path d="M604 192 q6 3 12 0" class="mouth"/></g>
-      <g id="a-upset" opacity="0"><path d="M600 176 l7 3 M620 176 l-7 3" class="mouth"/><path d="M604 194 q6 -4 12 0" class="mouth"/></g>
+      <path d="M600 176 l7 3 M620 176 l-7 3" class="mouth"/><path d="M604 194 q6 -4 12 0" class="mouth"/>
     </g>
     <g id="a-box">${A.box.svg}</g>
     ${wrap("a-lidB", ...A.rest["a-lidB"], lidSVG({ L: 196, W: 128, r: 22, sk: 7, col: LID.B }))}
@@ -342,12 +341,11 @@ const offA = (id, x, y) => `translate(${x - A.rest[id][0]}px, ${y - A.rest[id][1
 
 async function sceneA(token) {
   const svg = $("scene-a"); resetAll(svg);
-  const S = $("a-lidS"), R = $("a-lidR"), B = $("a-lidB"), box = $("a-box"), mark = $("a-mark"), calm = $("a-calm"), upset = $("a-upset");
+  const S = $("a-lidS"), R = $("a-lidR"), B = $("a-lidB"), box = $("a-box"), mark = $("a-mark"), person = $("a-person");
   const [tx, ty] = A.target;
   const ok = () => token === run;
   const late = PILE.map((p, i) => p.late ? $("a-pile" + i) : null).filter(Boolean);
   const fail = async () => {
-    move(calm, [{ opacity: 0 }], 150); move(upset, [{ opacity: 1 }], 150);   // le personnage se renfrogne
     await move(mark, [{ opacity: 0 }, { opacity: 1 }], 150); await wait(550); await move(mark, [{ opacity: 1 }, { opacity: 0 }], 200);
   };
   caption("a1"); await wait(1100); if (!ok()) return;
@@ -379,12 +377,13 @@ async function sceneA(token) {
   await move(B, [{ transform: offA("a-lidB", tx + 65, 280) + " rotate(3deg)" }, { transform: "none" }], 850);
   if (!ok()) return;
 
-  caption("a5"); // la boîte rejoint la pile au fond, et la pile grandit
+  caption("a5"); // le personnage arrive, mécontent ; la boîte rejoint le tas au fond, et le tas grandit
+  await move(person, [{ opacity: 0, transform: "translateX(24px)" }, { opacity: 1, transform: "none" }], 500);
   await move(box, [{ transform: "none" }, { transform: "translate(150px,-150px) rotate(-8deg) scale(.6)" },
-                   { transform: "translate(274px,-96px) scale(.27)" }], 1400, "ease-in-out");
+                   { transform: "translate(286px,-105px) scale(.25)" }], 1400, "ease-in-out");
   if (!ok()) return;
   move(late[0], [{ opacity: 0 }, { opacity: 1 }], 1);
-  move(box, [{ transform: "translate(274px,-96px) scale(.27)", opacity: 1 }, { transform: "translate(274px,-96px) scale(.27)", opacity: 0 }], 1);
+  move(box, [{ transform: "translate(286px,-105px) scale(.25)", opacity: 1 }, { transform: "translate(286px,-105px) scale(.25)", opacity: 0 }], 1);
   for (const g of late.slice(1)) {
     await wait(380); if (!ok()) return;
     move(g, [{ opacity: 0, transform: "translateY(-40px)" }, { opacity: 1, transform: "none" }], 420, "cubic-bezier(.5,0,1,1)");
