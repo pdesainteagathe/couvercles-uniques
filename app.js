@@ -18,6 +18,14 @@ const T = {
     tx_act_h: "Projet d'acte délégué", tx_act_p: "Le règlement que la Commission européenne pourrait adopter dans le cadre du règlement écoconception (ESPR)\u00a0: trois formats communs, hauteur libre, tous matériaux.",
     tx_pre_h: "Proposition de résolution européenne", tx_pre_p: "Le texte qu'un député ou une sénatrice peut déposer pour demander au Gouvernement de porter le projet à Bruxelles.",
     tx_fr: "Lire en français (PDF)", tx_en: "Read in English (PDF)",
+    cl_title: "Un bord commun, des fermetures au choix",
+    cl_lead: "La norme fixe le bord de la boîte : ses dimensions et une lèvre qui dépasse vers l'extérieur. Chaque fabricant accroche son couvercle à cette lèvre avec le système de son choix. Tous ces couvercles ferment toutes les boîtes du même format.",
+    cl_press_h: "Emboîtement", cl_press: "Un rebord souple qui se clipse sous la lèvre d'une simple pression. Léger et bon marché.",
+    cl_clips_h: "Clapets", cl_clips: "Quatre clapets à charnière qui se rabattent sous la lèvre. La fermeture tient dans un sac.",
+    cl_seal_h: "Joint et clapets", cl_seal: "Un joint en silicone appuie sur le haut du bord. Les clapets le serrent : la boîte devient étanche aux liquides.",
+    cl_rest_h: "Couvercle posé", cl_rest: "Un couvercle en verre ou en bois posé sur la lèvre, sans verrou. Pour le four, le frigo ou la table.",
+    cl_note: "Coupe du bord, l'intérieur de la boîte à gauche. Le projet d'acte délégué laisse libre le système de verrouillage, tant que le couvercle ferme toute boîte du même format (article 3, paragraphe 5). La norme harmonisée devra dessiner la lèvre pour que ces systèmes y trouvent tous prise (article 6).",
+    cl_lip: "lèvre commune", cl_in: "intérieur",
     nav_problem: "Le problème", nav_texts: "Les textes", nav_idea: "L'idée", nav_height: "Tous les volumes", nav_survey: "Votre avis",
     eyebrow: "Proposition citoyenne européenne",
     hero_title: "Le bon couvercle, sur n'importe quelle boîte.",
@@ -88,6 +96,14 @@ const T = {
     tx_act_h: "Draft delegated act", tx_act_p: "The regulation the European Commission could adopt under the Ecodesign for Sustainable Products Regulation (ESPR): three common formats, free height, all materials.",
     tx_pre_h: "Draft European resolution", tx_pre_p: "The text a French MP or senator can table to ask the Government to carry the project to Brussels. French only.",
     tx_fr: "Lire en français (PDF)", tx_en: "Read in English (PDF)",
+    cl_title: "A common rim, a choice of closures",
+    cl_lead: "The standard sets the rim of the box: its dimensions and a lip that sticks out. Each manufacturer attaches its lid to that lip with the system of its choice. All these lids close every box of the same format.",
+    cl_press_h: "Press-fit", cl_press: "A flexible skirt that snaps under the lip with a simple press. Light and cheap.",
+    cl_clips_h: "Clips", cl_clips: "Four hinged clips that fold under the lip. The lid holds in a bag.",
+    cl_seal_h: "Seal and clips", cl_seal: "A silicone seal presses on the top of the rim. The clips squeeze it: the box becomes leak-proof.",
+    cl_rest_h: "Resting lid", cl_rest: "A glass or wooden lid resting on the lip, with no lock. For the oven, the fridge or the table.",
+    cl_note: "Cross-section of the rim, inside of the box on the left. The draft delegated act leaves the locking system free, as long as the lid closes any box of the same format (Article 3(5)). The harmonised standard will have to shape the lip so that all these systems can grip it (Article 6).",
+    cl_lip: "common lip", cl_in: "inside",
     nav_problem: "The problem", nav_texts: "The texts", nav_idea: "The idea", nav_height: "Every size", nav_survey: "Your view",
     eyebrow: "A citizen proposal for Europe",
     hero_title: "The right lid, on any box.",
@@ -189,6 +205,7 @@ function applyLang() {
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
   renderQuestions();
   renderFigures();
+  renderClosures();
   updateHeight();
   renderResults();
   if (currentCaptionKey) caption(currentCaptionKey);
@@ -476,6 +493,27 @@ function renderFigures() {
     d.append(n, p, s); box.append(d);
   }
 }
+
+/* ---------- Fermetures : coupes du bord ---------- */
+// Paroi de la boîte (x 70 à 78) terminée par la lèvre commune (x 78 à 96, y 62 à 70), en tirets verts.
+function closureSVG(kind) {
+  const wall = `<path d="M70 140 V62 H96 V70 H78 V140 Z" class="cl-box"/>
+    <rect x="69" y="61" width="28" height="10" rx="2" class="cl-lip"/>
+    <text x="48" y="86" class="cl-lab mid">${t("cl_in")}</text>`;
+  const label = `<path d="M92 71 L98 91" class="cl-lead"/><text x="98" y="96" class="cl-lab">${t("cl_lip")}</text>`;
+  const plate = (y, cls = "cl-lid") => `<path d="M0 ${y} H98 q6 0 6 6 V${y + 8} H0 Z" class="${cls}"/>`;
+  let lid = "";
+  if (kind === "press") lid = plate(50) + `<path d="M98 58 h6 V76 q0 4 -4 4 H92 q-2 0 -2 -2 V74 h8 V70 h-2 Z" class="cl-lid"/>`;
+  if (kind === "clips" || kind === "seal") {
+    const y = kind === "seal" ? 46 : 50;
+    lid = plate(y) + `<circle cx="104" cy="${y + 4}" r="4" class="cl-hinge"/>
+      <path d="M106 ${y + 6} L110 ${y + 10} V80 q0 4 -4 4 H88 V76 h14 V${y + 12} Z" class="cl-clip"/>`;
+    if (kind === "seal") lid += `<rect x="64" y="54" width="22" height="8" rx="4" class="cl-seal"/>`;
+  }
+  if (kind === "rest") lid = `<path d="M0 46 H100 q6 0 6 6 V62 h-4 V58 H0 Z" class="cl-glass"/><path d="M100 62 h6 v10 h-6 z" class="cl-glass"/>`;
+  return wall + lid + label;
+}
+function renderClosures() { document.querySelectorAll(".cl-ill").forEach(s => { s.innerHTML = closureSVG(s.dataset.cl); }); }
 
 /* ---------- Hauteur libre ---------- */
 const FMTS = [[176, 108], [176, 162], [265, 162]];

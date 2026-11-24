@@ -218,3 +218,21 @@ input[type=range] { width: 100%; accent-color: var(--teal); height: 28px; }
 .hranges { list-style: none; padding: 0; margin: .6rem 0 .3rem; font-size: .95rem; color: #5b676c; }
 .hranges li { padding: .1rem 0; }
 .hranges li.on { color: var(--teal-dark); font-weight: 700; }
+
+.cl-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.4rem 0 .8rem; }
+@media (max-width: 900px) { .cl-cards { grid-template-columns: repeat(2, 1fr); } }
+.cl-card { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; box-shadow: var(--shadow); }
+.cl-card figcaption { font-size: .93rem; display: block; }
+.cl-card figcaption b { display: block; margin: .5rem 0 .2rem; font-size: 1.02rem; }
+.cl-ill { width: 100%; height: auto; display: block; background: #f4efe6; border-radius: 10px; }
+.cl-box { fill: #f6b98a; stroke: #b9774a; stroke-width: 1; }
+.cl-lip { fill: none; stroke: var(--teal); stroke-width: 1.6; stroke-dasharray: 3 2; }
+.cl-lid { fill: #2f9e80; stroke: #0f6553; stroke-width: 1; }
+.cl-clip { fill: #1f7f67; stroke: #0f6553; stroke-width: 1; }
+.cl-hinge { fill: #f3ece1; stroke: #0f6553; stroke-width: 1.2; }
+.cl-seal { fill: #3d4a55; }
+.cl-glass { fill: #cfe7ef; stroke: #7fb0c2; stroke-width: 1; }
+.cl-lab { font-size: 6px; font-weight: 700; fill: #0f6553; }
+.cl-lab.mid { fill: #9a6a45; text-anchor: middle; }
+.cl-lab.mid2 { text-anchor: middle; }
+.cl-lead { stroke: var(--teal); stroke-width: .7; }
