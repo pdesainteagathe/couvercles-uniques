@@ -91,7 +91,8 @@ p { margin: 0 0 1em; }
 #a-binlid { transform-box: fill-box; transform-origin: 0% 100%; }
 .lid-std rect { fill: var(--teal); stroke: rgba(30,42,47,.35); stroke-width: 1.5; }
 .lid-std .lid-top { fill: #33a587; stroke: none; }
-.lid-letter { fill: #fff; font-size: 10px; font-weight: 800; text-anchor: middle; letter-spacing: .05em; }
+.lid-std .skirt { fill: #12755e; stroke: none; }
+.lid-letter { fill: #fff; font-size: 9px; font-weight: 800; text-anchor: middle; letter-spacing: .05em; }
 .mark circle { stroke-width: 0; }
 .mark path { fill: none; stroke: #fff; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
 .mark.bad circle { fill: var(--tomato); }

@@ -329,7 +329,7 @@ function updateHeight() {
   $("vol").textContent = `${nf.format(litres)} ${t("litre")}`;
   // perspective cavalière : la profondeur W part en diagonale, 1 mm = 1 unité en façade
   const k = 0.55, dx = W * k * Math.cos(Math.PI / 6), dy = -W * k * Math.sin(Math.PI / 6);
-  const floor = 290, x = (420 - L - dx - 60) / 2, top = floor - h, lt = 11, o = 3;
+  const floor = 290, x = (420 - L - dx - 60) / 2, top = floor - h, lt = 7, o = 3, sk = 10; // sk : rebord descendant qui recouvre le haut de la boîte
   const P = pts => pts.map(p => p.join(",")).join(" ");
   $("hdraw").innerHTML = `
     <polygon class="box-stroke" fill="#eaa06c" points="${P([[x + L, top], [x + L + dx, top + dy], [x + L + dx, floor + dy], [x + L, floor]])}"/>
@@ -337,12 +337,13 @@ function updateHeight() {
     <rect class="box-stroke" fill="#f2a46e" x="${x - 1}" y="${top}" width="${L + 2}" height="8" rx="2"/>
     <g class="lid-std">
       <polygon points="${P([[x - o, top - lt], [x + L + o, top - lt], [x + L + o + dx, top - lt + dy], [x - o + dx, top - lt + dy]])}" class="lid-top-face"/>
-      <polygon points="${P([[x + L + o, top - lt], [x + L + o + dx, top - lt + dy], [x + L + o + dx, top + dy], [x + L + o, top]])}" class="lid-side"/>
-      <rect x="${x - o}" y="${top - lt}" width="${L + 2 * o}" height="${lt}" rx="3"/>
+      <polygon points="${P([[x + L + o, top - lt], [x + L + o + dx, top - lt + dy], [x + L + o + dx, top + sk + dy], [x + L + o, top + sk]])}" class="lid-side"/>
+      <rect x="${x - o}" y="${top - lt}" width="${L + 2 * o}" height="${lt + sk}" rx="3"/>
+      <rect x="${x - o}" y="${top}" width="${L + 2 * o}" height="${sk}" rx="2" class="skirt"/>
     </g>
     <text class="hdim" x="${x + L / 2}" y="${floor + 24}">${L} mm</text>
     <text class="hdim start" x="${x + L + dx + 6}" y="${floor + dy / 2 + 4}">${W} mm</text>
-    <text class="hdim strong" x="${x + L / 2}" y="${top + 4 + h / 2 + 5}">${h} mm</text>`;
+    <text class="hdim strong" x="${x + L / 2}" y="${top + sk + (h - sk) / 2 + 5}">${h} mm</text>`;
 }
 $("hslider").addEventListener("input", updateHeight);
 document.querySelectorAll(".fmt-pick button").forEach(b => b.addEventListener("click", () => {
