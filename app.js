@@ -22,7 +22,7 @@ const T = {
     tab_today: "Aujourd'hui", tab_tomorrow: "Avec des formats communs",
     replay: "Rejouer",
     a1: "Une boîte, trois couvercles.", a2: "Trop petit.", a3: "Rond, sur une boîte rectangulaire.", a4: "Trop grand.",
-    a5: "La boîte part à la poubelle, en parfait état.",
+    a5: "Une boîte de plus sans couvercle. La pile grandit.",
     b1: "Trois boîtes du même format : trois hauteurs, trois matériaux.", b2: "Un couvercle de ce format les ferme toutes.",
     b3: "Et les couvercles s'échangent.",
     b_glass: "verre", b_plastic: "plastique", b_steel: "inox",
@@ -87,7 +87,7 @@ const T = {
     tab_today: "Today", tab_tomorrow: "With common formats",
     replay: "Replay",
     a1: "One box, three lids.", a2: "Too small.", a3: "Round, on a rectangular box.", a4: "Too big.",
-    a5: "Into the bin it goes, in perfect condition.",
+    a5: "One more box without a lid. The pile grows.",
     b1: "Three boxes of the same format: three heights, three materials.", b2: "One lid of that format closes them all.",
     b3: "And the lids swap freely.",
     b_glass: "glass", b_plastic: "plastic", b_steel: "steel",
@@ -296,15 +296,33 @@ const wrap = (id, x, y, inner) => `<g transform="translate(${x} ${y})"><g id="${
 const A = { box: boxSVG({ X: 405, L: 150, W: 100, H: 82, r: 18, mat: "plastic", food: "salad" }) };
 A.rest = { "a-lidB": [150, 270], "a-lidR": [150, 255], "a-lidS": [150, 241] };
 A.target = [A.box.cx, A.box.cy];
+// Au fond : la pile des boîtes sans couvercle, petite et pâle parce que lointaine.
+const PILE = (() => {
+  const out = [], mats = ["plastic", "glass", "steel", "plastic", "steel", "plastic"];
+  const rows = [[672, 716, 760], [694, 738], [716]];          // centres des empreintes, rangée par rangée
+  let k = 0;
+  rows.forEach((xs, row) => xs.forEach(x => out.push({ x, y: 252 - row * 19, mat: mats[k++ % mats.length] })));
+  // boîtes qui arrivent ensuite, posées par-dessus
+  [[683, 214], [727, 214], [705, 195], [749, 233], [662, 233], [738, 195], [716, 176]]
+    .forEach(([x, y], i) => out.push({ x, y, mat: mats[(i + 2) % mats.length], late: true }));
+  return out;
+})();
+const pileBox = p => boxSVG({ X: p.x, Yfloor: p.y, L: 40, W: 26, H: 17, r: 6, mat: p.mat }).svg;
 (function buildA() {
   // le petit couvercle disparaît derrière les parois quand il tombe dans la boîte (règle pair-impair)
   const hole = `M-50 0H850V420H-50Z ${D(A.box.body)} ${D(A.box.top)}`;
   $("scene-a").innerHTML = `${counter}
     <defs><clipPath id="clipBox"><path clip-rule="evenodd" d="${hole}"/></clipPath></defs>
-    <g class="bin">
-      <path d="M642 228 L654 298 A36 8 0 0 0 726 298 L738 228 Z" class="bin-body"/>
-      <path d="M664 244 l4 46 M690 246 v46 M716 244 l-4 46" class="bin-lines"/>
-      <g id="a-binlid"><ellipse cx="690" cy="226" rx="52" ry="11" class="bin-lid"/><rect x="680" y="212" width="20" height="9" rx="3" class="bin-lid"/></g>
+    <g class="pile">${PILE.map((p, i) => p.late ? `<g id="a-pile${i}" opacity="0">${pileBox(p)}</g>` : pileBox(p)).join("")}</g>
+    <g class="person">
+      <path d="M598 296 l3 -52 M622 296 l-3 -52" class="leg"/>
+      <path d="M586 252 q0 -52 24 -52 q24 0 24 52 z" class="shirt"/>
+      <path d="M590 214 q-14 18 -2 30 l14 -6 M630 214 q14 18 2 30 l-14 -6" class="arm"/>
+      <circle cx="610" cy="182" r="17" class="skin"/>
+      <path d="M593 178 q2 -20 17 -20 q16 0 17 18 q-9 -9 -22 -8 q-8 1 -12 10 z" class="hair"/>
+      <circle cx="604" cy="183" r="1.8" class="eye"/><circle cx="616" cy="183" r="1.8" class="eye"/>
+      <g id="a-calm"><path d="M604 192 q6 3 12 0" class="mouth"/></g>
+      <g id="a-upset" opacity="0"><path d="M600 176 l7 3 M620 176 l-7 3" class="mouth"/><path d="M604 194 q6 -4 12 0" class="mouth"/></g>
     </g>
     <g id="a-box">${A.box.svg}</g>
     ${wrap("a-lidB", ...A.rest["a-lidB"], lidSVG({ L: 196, W: 128, r: 22, sk: 7, col: LID.B }))}
@@ -316,10 +334,14 @@ const offA = (id, x, y) => `translate(${x - A.rest[id][0]}px, ${y - A.rest[id][1
 
 async function sceneA(token) {
   const svg = $("scene-a"); resetAll(svg);
-  const S = $("a-lidS"), R = $("a-lidR"), B = $("a-lidB"), box = $("a-box"), mark = $("a-mark"), binlid = $("a-binlid");
+  const S = $("a-lidS"), R = $("a-lidR"), B = $("a-lidB"), box = $("a-box"), mark = $("a-mark"), calm = $("a-calm"), upset = $("a-upset");
   const [tx, ty] = A.target;
   const ok = () => token === run;
-  const fail = async () => { await move(mark, [{ opacity: 0 }, { opacity: 1 }], 150); await wait(550); await move(mark, [{ opacity: 1 }, { opacity: 0 }], 200); };
+  const late = PILE.map((p, i) => p.late ? $("a-pile" + i) : null).filter(Boolean);
+  const fail = async () => {
+    move(calm, [{ opacity: 0 }], 150); move(upset, [{ opacity: 1 }], 150);   // le personnage se renfrogne
+    await move(mark, [{ opacity: 0 }, { opacity: 1 }], 150); await wait(550); await move(mark, [{ opacity: 1 }, { opacity: 0 }], 200);
+  };
   caption("a1"); await wait(1100); if (!ok()) return;
 
   caption("a2"); // trop petit : tombe dans la boîte
@@ -343,17 +365,22 @@ async function sceneA(token) {
   await move(B, [{ transform: "none" }, { transform: offA("a-lidB", tx, ty - 70) }], 750);
   await move(B, [{ transform: offA("a-lidB", tx, ty - 70) }, { transform: offA("a-lidB", tx, ty + 2) }], 340, "cubic-bezier(.5,0,1,1)");
   if (!ok()) return;
-  await move(B, [{ transform: offA("a-lidB", tx, ty + 2) }, { transform: offA("a-lidB", tx + 70, ty + 30) + " rotate(22deg)" },
-                 { transform: offA("a-lidB", tx + 95, 280) + " rotate(3deg)" }], 650, "ease-in");
+  await move(B, [{ transform: offA("a-lidB", tx, ty + 2) }, { transform: offA("a-lidB", tx + 50, ty + 30) + " rotate(22deg)" },
+                 { transform: offA("a-lidB", tx + 65, 280) + " rotate(3deg)" }], 650, "ease-in");
   await fail(); if (!ok()) return;
-  await move(B, [{ transform: offA("a-lidB", tx + 95, 280) + " rotate(3deg)" }, { transform: "none" }], 850);
+  await move(B, [{ transform: offA("a-lidB", tx + 65, 280) + " rotate(3deg)" }, { transform: "none" }], 850);
   if (!ok()) return;
 
-  caption("a5"); // la boîte part à la poubelle
-  await move(binlid, [{ transform: "none" }, { transform: "translate(-30px,-20px) rotate(-30deg)" }], 400);
-  await move(box, [{ transform: "none" }, { transform: "translate(140px,-120px) rotate(16deg)" }, { transform: "translate(290px,-90px) rotate(34deg) scale(.8)" },
-                   { transform: "translate(295px,-10px) rotate(40deg) scale(.6)", opacity: 0 }], 1600, "ease-in-out");
-  await move(binlid, [{ transform: "translate(-30px,-20px) rotate(-30deg)" }, { transform: "none" }], 350);
+  caption("a5"); // la boîte rejoint la pile au fond, et la pile grandit
+  await move(box, [{ transform: "none" }, { transform: "translate(150px,-150px) rotate(-8deg) scale(.6)" },
+                   { transform: "translate(274px,-96px) scale(.27)" }], 1400, "ease-in-out");
+  if (!ok()) return;
+  move(late[0], [{ opacity: 0 }, { opacity: 1 }], 1);
+  move(box, [{ transform: "translate(274px,-96px) scale(.27)", opacity: 1 }, { transform: "translate(274px,-96px) scale(.27)", opacity: 0 }], 1);
+  for (const g of late.slice(1)) {
+    await wait(380); if (!ok()) return;
+    move(g, [{ opacity: 0, transform: "translateY(-40px)" }, { opacity: 1, transform: "none" }], 420, "cubic-bezier(.5,0,1,1)");
+  }
 }
 
 // ----- Scène B : formats communs
