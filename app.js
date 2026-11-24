@@ -22,7 +22,7 @@ const T = {
     cl_lead: "La norme fixe le bord de la boîte : ses dimensions et une lèvre qui dépasse vers l'extérieur. Chaque fabricant accroche son couvercle à cette lèvre avec le système de son choix, et choisit son épaisseur, sa couleur et sa matière. Tous ces couvercles ferment toutes les boîtes du même format.",
     cl_press_h: "À pression", cl_press: "Un couvercle en plastique souple épouse le bord et passe sous la lèvre d'une simple pression.",
     cl_clips_h: "À clapets", cl_clips: "Quatre clapets à charnière se rabattent et accrochent la lèvre. Ils serrent un joint en silicone posé sur le bord.",
-    cl_glass_h: "En verre", cl_glass: "Une plaque de verre bordée de silicone, posée sur la lèvre, sans verrou. Pour le four, le frigo ou la table.",
+    cl_glass_h: "En verre", cl_glass: "Une plaque de verre posée sur le bord. Une attache en silicone souple tient le verre et passe sous la lèvre. Pour le four, le frigo ou la table.",
     cl_note: "Coupe du bord de la boîte. Le projet d'acte délégué laisse libre le système de verrouillage, tant que le couvercle ferme toute boîte du même format (article 3, paragraphe 5). La norme harmonisée devra dessiner la lèvre pour que ces systèmes y trouvent tous prise (article 6).",
     nav_problem: "Le problème", nav_texts: "Les textes", nav_idea: "L'idée", nav_height: "Tous les volumes", nav_survey: "Votre avis",
     eyebrow: "Proposition citoyenne européenne",
@@ -98,7 +98,7 @@ const T = {
     cl_lead: "The standard sets the rim of the box: its dimensions and a lip that sticks out. Each manufacturer attaches its lid to that lip with the system of its choice, and picks its thickness, colour and material. All these lids close every box of the same format.",
     cl_press_h: "Press-on", cl_press: "A soft plastic lid hugs the rim and slips under the lip with a simple press.",
     cl_clips_h: "Clip-lock", cl_clips: "Four hinged clips fold down and catch the lip. They press a silicone seal onto the rim.",
-    cl_glass_h: "Glass", cl_glass: "A glass plate with a silicone edge, resting on the lip, with no lock. For the oven, the fridge or the table.",
+    cl_glass_h: "Glass", cl_glass: "A glass plate resting on the rim. A soft silicone clip holds the glass and slips under the lip. For the oven, the fridge or the table.",
     cl_note: "Cross-section of the rim. The draft delegated act leaves the locking system free, as long as the lid closes any box of the same format (Article 3(5)). The harmonised standard will have to shape the lip so that all these systems can grip it (Article 6).",
     nav_problem: "The problem", nav_texts: "The texts", nav_idea: "The idea", nav_height: "Every size", nav_survey: "Your view",
     eyebrow: "A citizen proposal for Europe",
@@ -514,9 +514,9 @@ function closureSVG(kind) {
     // charnière fine au bord du couvercle, clapet avec crochet sous la lèvre et ergot de préhension
     `<path d="M94 51 q3 0 3 3" class="cl-hinge"/>
      <path d="M92 56 H98 V84 l6 9 -3 2 -9 -9 V76 H82 V71 H92 Z" class="cl-clip"/>`;
-  if (kind === "glass") lid = `<rect x="20" y="49" width="72" height="13" rx="2" class="cl-glass"/>` +
-    // bordure en silicone qui coiffe la lèvre, sans verrou
-    `<path d="M86 48 H96 q3 0 3 3 V72 H91 V62 H86 Z" class="cl-band"/>`;
+  if (kind === "glass") lid = `<rect x="20" y="49" width="70" height="13" rx="2" class="cl-glass"/>` +
+    // attache en silicone souple : pince le bord du verre et passe sous la lèvre
+    `<path d="M86 50 Q86 48 88 48 H95 Q99 48 99 52 V71 Q99 75 95 75 H86 Q83 75 83 73 Q83 71 85 71 H89 Q91 71 91 69 V53 H88 Q86 53 86 51 Z" class="cl-band"/>`;
   return box + lid;
 }
 function renderClosures() { document.querySelectorAll(".cl-ill").forEach(s => { s.innerHTML = closureSVG(s.dataset.cl); }); }
