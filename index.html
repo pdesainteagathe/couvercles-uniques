@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Un couvercle pour chaque boîte</title>
+<meta name="description" content="Proposition citoyenne : quelques formats communs pour les boîtes de conservation alimentaire en Europe, comme l'USB-C pour les chargeurs.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg class="defs" aria-hidden="true" focusable="false"><defs>
+  <linearGradient id="gPlastic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd8b8"/><stop offset="1" stop-color="#f6b98a"/></linearGradient>
+  <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6f3f7" stop-opacity=".95"/><stop offset="1" stop-color="#b9dbe6" stop-opacity=".9"/></linearGradient>
+  <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c9ced3"/><stop offset=".5" stop-color="#eef0f2"/><stop offset="1" stop-color="#b5bcc3"/></linearGradient>
+</defs></svg>
+
+<header class="top">
+  <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="9" width="24" height="5" rx="2" fill="var(--teal)"/><path d="M6 15h20v9a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z" fill="var(--box)"/></svg><span data-i18n="brand">Un couvercle pour chaque boîte</span></a>
+  <nav aria-label="Navigation">
+    <a href="#probleme" data-i18n="nav_problem">Le problème</a>
+    <a href="#idee" data-i18n="nav_idea">L'idée</a>
+    <a href="#hauteur" data-i18n="nav_height">Hauteur libre</a>
+    <a href="#avis" data-i18n="nav_survey">Votre avis</a>
+  </nav>
+  <div class="lang" role="group" aria-label="Langue / Language">
+    <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <p class="eyebrow" data-i18n="eyebrow">Proposition citoyenne européenne</p>
+    <h1 data-i18n="hero_title">Le bon couvercle, sur n'importe quelle boîte.</h1>
+    <p class="lead" data-i18n="hero_lead">Quelques formats communs pour les boîtes de conservation alimentaire en Europe, comme l'USB-C pour les chargeurs. Un couvercle perdu ne condamnerait plus sa boîte.</p>
+    <div class="cta">
+      <a class="btn primary" href="#avis" data-i18n="cta_survey">Répondre au questionnaire (1 min)</a>
+      <a class="btn ghost" href="#idee" data-i18n="cta_idea">Voir l'idée</a>
+    </div>
+  </div>
+
+  <figure class="stage" id="stage">
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tab-a" aria-selected="true" data-scene="a" data-i18n="tab_today">Aujourd'hui</button>
+      <button type="button" role="tab" id="tab-b" aria-selected="false" data-scene="b" data-i18n="tab_tomorrow">Avec des formats communs</button>
+    </div>
+
+    <svg id="scene-a" class="scene" viewBox="0 70 800 270" role="img" aria-labelledby="cap">
+      <line x1="0" y1="300.5" x2="800" y2="300.5" class="floor"/>
+      <!-- bin -->
+      <g class="bin">
+        <path d="M640 226 h110 l-10 74 h-90 z" class="bin-body"/>
+        <path d="M662 244 v44 M695 244 v44 M728 244 v44" class="bin-lines"/>
+        <g id="a-binlid"><rect x="632" y="214" width="126" height="10" rx="4" class="bin-lid"/><rect x="683" y="207" width="24" height="8" rx="3" class="bin-lid"/></g>
+      </g>
+      <!-- the box -->
+      <g id="a-box">
+        <path d="M332 210 h136 v76 a14 14 0 0 1 -14 14 h-108 a14 14 0 0 1 -14 -14 z" fill="url(#gPlastic)" class="box-stroke"/>
+        <rect x="326" y="204" width="148" height="9" rx="3" fill="#f2a46e" class="box-stroke"/>
+      </g>
+      <!-- lids pile -->
+      <g transform="translate(110 292)"><g id="a-lidB"><rect x="-95" y="-6" width="190" height="12" rx="5" fill="#7aa6c2" class="box-stroke"/><rect x="-82" y="-10" width="164" height="5" rx="2" fill="#94bcd6"/></g></g>
+      <g transform="translate(110 278)"><g id="a-lidC"><rect x="-75" y="-6" width="150" height="12" rx="5" fill="#c49bd1" class="box-stroke"/><rect x="-75" y="4" width="10" height="10" rx="2" fill="#c49bd1" class="box-stroke"/><rect x="65" y="4" width="10" height="10" rx="2" fill="#c49bd1" class="box-stroke"/></g></g>
+      <g transform="translate(110 264)"><g id="a-lidA"><rect x="-50" y="-6" width="100" height="12" rx="5" fill="#9ccf9a" class="box-stroke"/><rect x="-40" y="-10" width="80" height="5" rx="2" fill="#b6ddb4"/></g></g>
+      <g id="a-mark" class="mark bad" opacity="0"><circle cx="400" cy="140" r="20"/><path d="M391 131 l18 18 M409 131 l-18 18"/></g>
+    </svg>
+
+    <svg id="scene-b" class="scene" viewBox="0 70 800 270" role="img" aria-labelledby="cap" hidden>
+      <line x1="0" y1="300.5" x2="800" y2="300.5" class="floor"/>
+      <!-- glass, low -->
+      <g><path d="M132 246 h136 v40 a14 14 0 0 1 -14 14 h-108 a14 14 0 0 1 -14 -14 z" fill="url(#gGlass)" class="box-stroke"/><rect x="126" y="240" width="148" height="9" rx="3" fill="#cfe7ef" class="box-stroke"/></g>
+      <!-- plastic, mid -->
+      <g><path d="M332 206 h136 v80 a14 14 0 0 1 -14 14 h-108 a14 14 0 0 1 -14 -14 z" fill="url(#gPlastic)" class="box-stroke"/><rect x="326" y="200" width="148" height="9" rx="3" fill="#f2a46e" class="box-stroke"/></g>
+      <!-- steel, tall -->
+      <g><path d="M532 156 h136 v130 a14 14 0 0 1 -14 14 h-108 a14 14 0 0 1 -14 -14 z" fill="url(#gSteel)" class="box-stroke"/><rect x="526" y="150" width="148" height="9" rx="3" fill="#d9dde1" class="box-stroke"/></g>
+      <text x="200" y="326" class="tag" data-i18n="b_glass">verre</text>
+      <text x="400" y="326" class="tag" data-i18n="b_plastic">plastique</text>
+      <text x="600" y="326" class="tag" data-i18n="b_steel">inox</text>
+      <!-- identical lids, start above -->
+      <g transform="translate(200 234)"><g id="b-lid1" class="lid-std"><rect x="-77" y="-6" width="154" height="12" rx="5"/><rect x="-62" y="-11" width="124" height="6" rx="2" class="lid-top"/><text x="0" y="4" class="lid-letter">A</text></g></g>
+      <g transform="translate(400 194)"><g id="b-lid2" class="lid-std"><rect x="-77" y="-6" width="154" height="12" rx="5"/><rect x="-62" y="-11" width="124" height="6" rx="2" class="lid-top"/><text x="0" y="4" class="lid-letter">B</text></g></g>
+      <g transform="translate(600 144)"><g id="b-lid3" class="lid-std"><rect x="-77" y="-6" width="154" height="12" rx="5"/><rect x="-62" y="-11" width="124" height="6" rx="2" class="lid-top"/><text x="0" y="4" class="lid-letter">C</text></g></g>
+      <g id="b-checks" opacity="0">
+        <g class="mark good"><circle cx="200" cy="200" r="16"/><path d="M192 200 l6 6 l11 -12"/></g>
+        <g class="mark good"><circle cx="400" cy="160" r="16"/><path d="M392 160 l6 6 l11 -12"/></g>
+        <g class="mark good"><circle cx="600" cy="110" r="16"/><path d="M592 110 l6 6 l11 -12"/></g>
+      </g>
+    </svg>
+
+    <figcaption>
+      <p id="cap" class="caption" aria-live="polite">&nbsp;</p>
+      <button type="button" class="replay" id="replay" data-i18n="replay">Rejouer</button>
+    </figcaption>
+  </figure>
+</section>
+
+<!-- PROBLEM -->
+<section id="probleme" class="band">
+  <div class="wrap two">
+    <div>
+      <h2 data-i18n="pb_title">Le tiroir à couvercles</h2>
+      <p data-i18n="pb_p1">Chaque marque a ses propres dimensions, et souvent chaque gamme d'une même marque. Un couvercle perdu, cassé ou déformé au lave-vaisselle rend sa boîte presque inutile.</p>
+      <p data-i18n="pb_p2">La boîte finit à la poubelle en bon état, et on rachète un lot complet. Les boîtes de conservation servent justement à éviter les emballages jetables : chaque boîte jetée pour un couvercle va contre ce but.</p>
+    </div>
+    <div class="figures" id="figures">
+      <!-- filled by figures in app.js -->
+    </div>
+  </div>
+</section>
+
+<!-- IDEA -->
+<section id="idee" class="wrap">
+  <h2 data-i18n="idea_title">Trois ou quatre formats communs</h2>
+  <div class="two">
+    <div>
+      <p data-i18n="idea_p1">Un format est défini par deux choses : les dimensions du bord, vu de dessus, et le profil qui reçoit le couvercle. Un couvercle d'un format ferme toutes les boîtes de ce format, de toute marque et de tout matériau : plastique, verre, inox.</p>
+      <p data-i18n="idea_p2">Les fabricants gardent la main sur la hauteur, les matériaux, les couleurs, le système de fermeture et le prix.</p>
+      <p><span data-i18n="idea_ikea">C'est faisable : IKEA ferme déjà ses boîtes de 1 litre en plastique et en verre avec le même couvercle.</span> <a href="https://www.ikea.com/ie/en/p/ikea-365-food-container-with-lid-rectangular-glass-plastic-s89269071/" data-i18n="idea_ikea_src">Voir le produit</a></p>
+      <p class="note" data-i18n="idea_note">Proposition de départ, ouverte à discussion. Les dimensions reprennent celles du Gastronorm, utilisé dans les cuisines professionnelles depuis 1964 : elles se combinent sur un plateau sans place perdue.</p>
+      <ul class="legend">
+        <li><span class="sw f1"></span><b>UE-1</b> 176 × 108 mm</li>
+        <li><span class="sw f2"></span><b>UE-2</b> 176 × 162 mm</li>
+        <li><span class="sw f3"></span><b>UE-3</b> 265 × 162 mm</li>
+        <li><span class="sw fr"></span><b>UE-R</b> <span data-i18n="round_tbd">ronde, diamètre à définir</span></li>
+      </ul>
+    </div>
+    <figure class="tray">
+      <svg viewBox="-10 -10 560 400" role="img" aria-label="UE-1, UE-2, UE-3">
+        <rect x="0" y="0" width="530" height="325" rx="10" class="tray-bg"/>
+        <g class="tile f3"><rect x="2" y="2" width="263" height="160" rx="8"/><text x="133" y="88">UE-3</text></g>
+        <g class="tile f3"><rect x="267" y="2" width="261" height="160" rx="8"/><text x="397" y="88">UE-3</text></g>
+        <g class="tile f2"><rect x="2" y="164" width="174" height="159" rx="8"/><text x="89" y="250">UE-2</text></g>
+        <g class="tile f1"><rect x="178" y="164" width="174" height="78" rx="8"/><text x="265" y="209">UE-1</text></g>
+        <g class="tile f1"><rect x="178" y="244" width="174" height="79" rx="8"/><text x="265" y="290">UE-1</text></g>
+        <g class="tile f2"><rect x="354" y="164" width="174" height="159" rx="8"/><text x="441" y="250">UE-2</text></g>
+        <text x="265" y="365" class="dim" data-i18n="tray_caption">plateau de 53 × 32,5 cm, sans place perdue</text>
+      </svg>
+    </figure>
+  </div>
+</section>
+
+<!-- HEIGHT -->
+<section id="hauteur" class="band alt">
+  <div class="wrap two">
+    <div>
+      <h2 data-i18n="h_title">La hauteur reste libre</h2>
+      <p data-i18n="h_p1">Un format fixe le bord. La boîte peut être basse pour une portion, ou haute pour une soupe. Le même couvercle ferme les deux.</p>
+      <div class="fmt-pick" role="group" aria-label="Format">
+        <button type="button" data-fmt="0" aria-pressed="true">UE-1</button>
+        <button type="button" data-fmt="1" aria-pressed="false">UE-2</button>
+        <button type="button" data-fmt="2" aria-pressed="false">UE-3</button>
+      </div>
+      <label class="slider-label" for="hslider"><span data-i18n="h_label">Hauteur :</span> <output id="hval">6 cm</output></label>
+      <input type="range" id="hslider" min="30" max="200" step="5" value="60">
+      <p class="volume"><span data-i18n="h_vol">Contenance</span> ≈ <output id="vol">0,8 l</output></p>
+      <p class="note" data-i18n="h_note">Calcul indicatif : parois de 6 mm et fond de 8 mm supposés.</p>
+    </div>
+    <figure class="hfig">
+      <svg id="hsvg" viewBox="0 0 420 330" role="img" aria-label="">
+        <line x1="0" y1="290.5" x2="420" y2="290.5" class="floor"/>
+        <g id="hdraw"></g>
+      </svg>
+    </figure>
+  </div>
+</section>
+
+<!-- PRECEDENTS -->
+<section class="wrap">
+  <h2 data-i18n="pr_title">Ça a déjà marché</h2>
+  <div class="cards">
+    <article class="card">
+      <h3>USB-C</h3>
+      <p data-i18n="pr_usbc">Depuis le 28 décembre 2024, les téléphones neufs vendus dans l'Union européenne se rechargent par un port USB-C. Un seul chargeur pour tous les appareils.</p>
+      <a href="https://eur-lex.europa.eu/eli/dir/2022/2380/oj" data-i18n="pr_usbc_src">Directive (UE) 2022/2380</a>
+      <a href="https://single-market-economy.ec.europa.eu/news/pullin-plug-consumer-frustration-and-e-waste-commission-proposes-common-charger-electronic-2021-09-23_en" data-i18n="pr_usbc_src2">Commission européenne, 2021</a>
+    </article>
+    <article class="card">
+      <h3>Gastronorm</h3>
+      <p data-i18n="pr_gn">Créé en Suisse en 1964, norme européenne EN 631 depuis 1993. Dans les cuisines professionnelles, n'importe quel bac va dans n'importe quel four, chariot ou réfrigérateur.</p>
+      <a href="https://en.wikipedia.org/wiki/Gastronorm" data-i18n="pr_gn_src">Histoire du Gastronorm</a>
+    </article>
+    <article class="card">
+      <h3 data-i18n="pr_how_t">L'outil existe</h3>
+      <p data-i18n="pr_how">Le règlement européen sur l'écoconception permet déjà à la Commission d'imposer des composants standard, par acte délégué. Une loi française seule entraverait la libre circulation des marchandises : la décision se prend à Bruxelles.</p>
+      <a href="https://eur-lex.europa.eu/eli/reg/2024/1781/oj" data-i18n="pr_how_src">Règlement (UE) 2024/1781</a>
+    </article>
+  </div>
+</section>
+
+<!-- SURVEY -->
+<section id="avis" class="band survey-band">
+  <div class="wrap narrow">
+    <h2 data-i18n="sv_title">Votre placard en chiffres</h2>
+    <p data-i18n="sv_intro">Anonyme, une minute. Personne n'a encore compté les boîtes jetées faute de couvercle : vos réponses serviront à chiffrer le problème auprès des élus.</p>
+    <form id="survey" novalidate>
+      <!-- questions rendered by app.js -->
+      <div id="questions"></div>
+      <button type="submit" class="btn primary" data-i18n="sv_submit">Envoyer mes réponses</button>
+      <p id="sv-error" class="error" hidden data-i18n="sv_error">L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez.</p>
+      <p class="note" data-i18n="sv_privacy">Aucune donnée personnelle : ni nom, ni adresse email, ni cookie de suivi.</p>
+    </form>
+    <div id="thanks" class="thanks" hidden>
+      <h3 data-i18n="sv_thanks_t">Merci.</h3>
+      <p data-i18n="sv_thanks">Partagez la page pour que d'autres répondent : plus il y a de réponses, plus le chiffre pèse.</p>
+      <button type="button" class="btn ghost" id="share" data-i18n="share">Partager la page</button>
+    </div>
+    <div id="results" class="results" hidden>
+      <h3 data-i18n="res_title">Les réponses jusqu'ici</h3>
+      <p id="results-n" class="note"></p>
+      <div id="results-bars"></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATUS -->
+<section class="wrap narrow status">
+  <h2 data-i18n="st_title">Où en est la proposition</h2>
+  <ol class="timeline">
+    <li><b data-i18n="st_1_d">Novembre 2026</b> <span data-i18n="st_1">Projet d'acte délégué et proposition de résolution européenne rédigés, puis envoyés à des parlementaires français et européens et à des associations.</span></li>
+    <li><b data-i18n="st_2_d">Prochaine étape</b> <span data-i18n="st_2">Trouver un député ou une sénatrice pour déposer la résolution, et un eurodéputé pour interroger la Commission.</span></li>
+  </ol>
+  <p class="docs"><span data-i18n="st_docs">Textes complets :</span>
+    <a href="docs/Projet-acte-delegue-formats-boites-alimentaires.pdf" data-i18n="doc_act">projet d'acte délégué</a> ·
+    <a href="docs/Proposition-resolution-europeenne-formats-boites-alimentaires.pdf" data-i18n="doc_pre">proposition de résolution européenne</a> ·
+    <a href="docs/Draft-delegated-act-food-container-formats.pdf" data-i18n="doc_act_en">draft delegated act (EN)</a>
+  </p>
+</section>
+
+</main>
+
+<footer class="foot">
+  <p data-i18n="foot">Proposition citoyenne portée par Pierre de Sainte Agathe, à titre personnel. Code source ouvert.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
