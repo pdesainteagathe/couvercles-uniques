@@ -26,7 +26,7 @@
   <nav aria-label="Navigation">
     <a href="#probleme" data-i18n="nav_problem">Le problème</a>
     <a href="#idee" data-i18n="nav_idea">L'idée</a>
-    <a href="#hauteur" data-i18n="nav_height">Hauteur libre</a>
+    <a href="#hauteur" data-i18n="nav_height">Tous les volumes</a>
     <a href="#textes" data-i18n="nav_texts">Les textes</a>
     <a href="#avis" data-i18n="nav_survey">Votre avis</a>
   </nav>
@@ -116,16 +116,19 @@
 <section id="hauteur" class="band alt">
   <div class="wrap two">
     <div>
-      <h2 data-i18n="h_title">La hauteur reste libre</h2>
+      <h2 data-i18n="h_title">Trois couvercles, tous les volumes</h2>
       <p data-i18n="h_p1">Un format fixe le bord. La boîte peut être basse pour une portion, ou haute pour une soupe. Le même couvercle ferme les deux.</p>
+      <p class="step" data-i18n="h_step1">1. Choisissez un couvercle</p>
       <div class="fmt-pick" role="group" aria-label="Format">
-        <button type="button" data-fmt="0" aria-pressed="true">UE-1</button>
-        <button type="button" data-fmt="1" aria-pressed="false">UE-2</button>
-        <button type="button" data-fmt="2" aria-pressed="false">UE-3</button>
+        <button type="button" data-fmt="0" aria-pressed="true">UE-1 <small>176 × 108</small></button>
+        <button type="button" data-fmt="1" aria-pressed="false">UE-2 <small>176 × 162</small></button>
+        <button type="button" data-fmt="2" aria-pressed="false">UE-3 <small>265 × 162</small></button>
       </div>
+      <p class="step" data-i18n="h_step2">2. Réglez la hauteur de la boîte</p>
       <label class="slider-label" for="hslider"><span data-i18n="h_label">Hauteur :</span> <output id="hval">6 cm</output></label>
       <input type="range" id="hslider" min="30" max="200" step="5" value="60">
       <p class="volume"><span data-i18n="h_vol">Contenance</span> ≈ <output id="vol">0,8 l</output></p>
+      <ul id="hranges" class="hranges"></ul>
       <p class="note" data-i18n="h_note">Calcul indicatif : parois de 6 mm et fond de 8 mm supposés.</p>
     </div>
     <figure class="hfig">

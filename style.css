@@ -211,3 +211,10 @@ input[type=range] { width: 100%; accent-color: var(--teal); height: 28px; }
 .text-card { background: #fff; border: 1px solid #e6dccd; border-radius: 16px; padding: 1.3rem 1.4rem; display: flex; flex-direction: column; }
 .text-card h3 { margin: 0 0 .5rem; }
 .text-card .dl-links { margin-top: auto; display: flex; flex-wrap: wrap; gap: .6rem; padding-top: .6rem; }
+
+.step { font-weight: 700; margin: 1.1rem 0 .3rem; color: var(--teal-dark); }
+.fmt-pick { margin: .4rem 0 .8rem; flex-wrap: wrap; }
+.fmt-pick small { font-weight: 500; opacity: .75; margin-left: .25rem; }
+.hranges { list-style: none; padding: 0; margin: .6rem 0 .3rem; font-size: .95rem; color: #5b676c; }
+.hranges li { padding: .1rem 0; }
+.hranges li.on { color: var(--teal-dark); font-weight: 700; }

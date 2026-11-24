@@ -18,7 +18,7 @@ const T = {
     tx_act_h: "Projet d'acte délégué", tx_act_p: "Le règlement que la Commission européenne pourrait adopter dans le cadre du règlement écoconception (ESPR)\u00a0: trois formats communs, hauteur libre, tous matériaux.",
     tx_pre_h: "Proposition de résolution européenne", tx_pre_p: "Le texte qu'un député ou une sénatrice peut déposer pour demander au Gouvernement de porter le projet à Bruxelles.",
     tx_fr: "Lire en français (PDF)", tx_en: "Read in English (PDF)",
-    nav_problem: "Le problème", nav_texts: "Les textes", nav_idea: "L'idée", nav_height: "Hauteur libre", nav_survey: "Votre avis",
+    nav_problem: "Le problème", nav_texts: "Les textes", nav_idea: "L'idée", nav_height: "Tous les volumes", nav_survey: "Votre avis",
     eyebrow: "Proposition citoyenne européenne",
     hero_title: "Le bon couvercle, sur n'importe quelle boîte.",
     hero_lead: "Quelques formats communs pour les boîtes de conservation alimentaire en Europe, comme l'USB-C pour les chargeurs. Un couvercle perdu ne condamnerait plus sa boîte.",
@@ -40,8 +40,9 @@ const T = {
     idea_ikea: "C'est faisable : IKEA ferme déjà ses boîtes de 1 litre en plastique et en verre avec le même couvercle.", idea_ikea_src: "Voir le produit",
     idea_note: "Proposition de départ, ouverte à discussion. Les dimensions reprennent celles du Gastronorm, utilisé dans les cuisines professionnelles depuis 1964 : elles se combinent sur un plateau sans place perdue.",
     tray_caption: "plateau de 53 × 32,5 cm, sans place perdue",
-    h_title: "La hauteur reste libre",
-    h_p1: "Un format fixe le bord. La boîte peut être basse pour une portion, ou haute pour une soupe. Le même couvercle ferme les deux.",
+    h_title: "Trois couvercles, tous les volumes",
+    h_p1: "Chaque couvercle a une taille fixe. La hauteur de la boîte est libre. Une boîte basse pour une portion et une boîte haute pour une soupe prennent le même couvercle.",
+    h_step1: "1. Choisissez un couvercle", h_step2: "2. Réglez la hauteur de la boîte", h_range: "{f} : de {a} à {b}",
     dim_len: "longueur", dim_wid: "largeur", dim_h: "hauteur libre", h_label: "Hauteur :", h_vol: "Contenance",
     h_note: "Calcul indicatif : parois de 6 mm et fond de 8 mm supposés.",
     pr_title: "Ça a déjà marché",
@@ -87,7 +88,7 @@ const T = {
     tx_act_h: "Draft delegated act", tx_act_p: "The regulation the European Commission could adopt under the Ecodesign for Sustainable Products Regulation (ESPR): three common formats, free height, all materials.",
     tx_pre_h: "Draft European resolution", tx_pre_p: "The text a French MP or senator can table to ask the Government to carry the project to Brussels. French only.",
     tx_fr: "Lire en français (PDF)", tx_en: "Read in English (PDF)",
-    nav_problem: "The problem", nav_texts: "The texts", nav_idea: "The idea", nav_height: "Free height", nav_survey: "Your view",
+    nav_problem: "The problem", nav_texts: "The texts", nav_idea: "The idea", nav_height: "Every size", nav_survey: "Your view",
     eyebrow: "A citizen proposal for Europe",
     hero_title: "The right lid, on any box.",
     hero_lead: "A few common formats for food storage containers in Europe, like USB-C for chargers. A lost lid would no longer doom its box.",
@@ -109,8 +110,9 @@ const T = {
     idea_ikea: "It can be done: IKEA already closes its 1-litre plastic and glass boxes with the same lid.", idea_ikea_src: "See the product",
     idea_note: "Starting proposal, open for discussion. The dimensions follow Gastronorm, used in professional kitchens since 1964: they combine on a tray with no wasted space.",
     tray_caption: "53 × 32.5 cm tray, no wasted space",
-    h_title: "Height stays free",
-    h_p1: "A format sets the rim. The box can be shallow for a single portion or deep for soup. The same lid closes both.",
+    h_title: "Three lids, every size of box",
+    h_p1: "Each lid has a fixed size. The height of the box is free. A shallow box for one portion and a deep box for soup take the same lid.",
+    h_step1: "1. Pick a lid", h_step2: "2. Set the height of the box", h_range: "{f}: from {a} to {b}",
     dim_len: "length", dim_wid: "width", dim_h: "free height", h_label: "Height:", h_vol: "Capacity",
     h_note: "Rough estimate: 6 mm walls and an 8 mm base assumed.",
     pr_title: "It has worked before",
@@ -485,6 +487,14 @@ function updateHeight() {
   const nf = new Intl.NumberFormat(lang === "fr" ? "fr-FR" : "en-GB", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
   $("hval").textContent = `${nf.format(h / 10)} ${t("cm")}`;
   $("vol").textContent = `${nf.format(litres)} ${t("litre")}`;
+  // fourchette de chaque couvercle, de la boîte la plus basse à la plus haute du curseur
+  const sl = $("hslider"), cap = (f, hh) => ((FMTS[f][0] - 12) * (FMTS[f][1] - 12) * (hh - 8)) / 1e6;
+  $("hranges").textContent = "";
+  FMTS.forEach((_, f) => {
+    const li = document.createElement("li"); if (f === fmt) li.className = "on";
+    li.textContent = t("h_range").replace("{f}", "UE-" + (f + 1)).replace("{a}", `${nf.format(cap(f, +sl.min))} ${t("litre")}`).replace("{b}", `${nf.format(cap(f, +sl.max))} ${t("litre")}`);
+    $("hranges").append(li);
+  });
   // même rendu que l'animation : empreinte arrondie, couvercle à rebord descendant, pâtes dedans
   const floor = 280, X = 285;
   const b = boxSVG({ X, Yfloor: floor, L, W, H: h, r: 20, mat: "plastic", food: "pasta" });
