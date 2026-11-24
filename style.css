@@ -188,3 +188,10 @@ input[type=range] { width: 100%; accent-color: var(--teal); height: 28px; }
 .res-bar { height: 10px; background: #eee6da; border-radius: 99px; overflow: hidden; }
 .res-bar span { display: block; height: 100%; background: var(--teal); border-radius: 99px; }
 .res-val { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.card-ill { width: 100%; height: auto; display: block; background: #f4efe6; border-radius: 10px; margin-bottom: 1rem; padding: .4rem; }
+.ill-check circle { fill: var(--teal); }
+.ill-check path { fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.ill-lab text { font-size: 13px; font-weight: 800; fill: rgba(30,42,47,.8); text-anchor: middle; dominant-baseline: middle; }
+.ill-dim { font-size: 9.5px; fill: var(--muted); text-anchor: middle; font-weight: 600; }
+.ill-stamp { font-size: 9px; font-weight: 800; fill: #fff; text-anchor: middle; }

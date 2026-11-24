@@ -41,7 +41,7 @@ const T = {
     h_label: "Hauteur :", h_vol: "Contenance",
     h_note: "Calcul indicatif : parois de 6 mm et fond de 8 mm supposés.",
     pr_title: "Ça a déjà marché",
-    pr_usbc: "Depuis le 28 décembre 2024, les téléphones neufs vendus dans l'Union européenne se rechargent par un port USB-C. La Commission estimait à 11 000 tonnes par an les déchets de chargeurs jetés ou inutilisés.",
+    pr_usbc: "Depuis le 28 décembre 2024, les téléphones neufs vendus dans l'Union européenne se rechargent par un port USB-C. La Commission estimait à 11\u00a0000 tonnes par an les déchets de chargeurs jetés ou inutilisés.",
     pr_usbc_src: "Directive (UE) 2022/2380", pr_usbc_src2: "Commission européenne, 2021",
     pr_gn: "Créé en Suisse en 1964, norme européenne EN 631 depuis 1993. Dans les cuisines professionnelles, n'importe quel bac va dans n'importe quel four, chariot ou réfrigérateur.",
     pr_gn_src: "Histoire du Gastronorm",
