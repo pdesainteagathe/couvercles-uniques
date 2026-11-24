@@ -21,7 +21,7 @@ const T = {
     cta_survey: "Répondre au questionnaire (1 min)", cta_idea: "Voir l'idée",
     tab_today: "Aujourd'hui", tab_tomorrow: "Avec des formats communs",
     replay: "Rejouer",
-    a1: "Une boîte, trois couvercles.", a2: "Trop petit.", a3: "Trop grand.", a4: "Presque. Il ne clipse pas.",
+    a1: "Une boîte, trois couvercles.", a2: "Trop petit.", a3: "Rond, sur une boîte rectangulaire.", a4: "Trop grand.",
     a5: "La boîte part à la poubelle, en parfait état.",
     b1: "Trois boîtes du même format : trois hauteurs, trois matériaux.", b2: "Un couvercle de ce format les ferme toutes.",
     b3: "Et les couvercles s'échangent.",
@@ -29,12 +29,11 @@ const T = {
     pb_title: "Le tiroir à couvercles",
     pb_p1: "Chaque marque a ses propres dimensions, et souvent chaque gamme d'une même marque. Un couvercle perdu, cassé ou déformé au lave-vaisselle rend sa boîte presque inutile.",
     pb_p2: "La boîte finit à la poubelle en bon état, et on rachète un lot complet. Les boîtes de conservation servent justement à éviter les emballages jetables : chaque boîte jetée pour un couvercle va contre ce but.",
-    idea_title: "Trois ou quatre formats communs",
+    idea_title: "Trois formats communs",
     idea_p1: "Un format est défini par deux choses : les dimensions du bord, vu de dessus, et le profil qui reçoit le couvercle. Un couvercle d'un format ferme toutes les boîtes de ce format, de toute marque et de tout matériau : plastique, verre, inox.",
     idea_p2: "Les fabricants gardent la main sur la hauteur, les matériaux, les couleurs, le système de fermeture et le prix.",
     idea_ikea: "C'est faisable : IKEA ferme déjà ses boîtes de 1 litre en plastique et en verre avec le même couvercle.", idea_ikea_src: "Voir le produit",
     idea_note: "Proposition de départ, ouverte à discussion. Les dimensions reprennent celles du Gastronorm, utilisé dans les cuisines professionnelles depuis 1964 : elles se combinent sur un plateau sans place perdue.",
-    round_tbd: "ronde, diamètre à définir",
     tray_caption: "plateau de 53 × 32,5 cm, sans place perdue",
     h_title: "La hauteur reste libre",
     h_p1: "Un format fixe le bord. La boîte peut être basse pour une portion, ou haute pour une soupe. Le même couvercle ferme les deux.",
@@ -86,7 +85,7 @@ const T = {
     cta_survey: "Take the survey (1 min)", cta_idea: "See the idea",
     tab_today: "Today", tab_tomorrow: "With common formats",
     replay: "Replay",
-    a1: "One box, three lids.", a2: "Too small.", a3: "Too big.", a4: "Almost. It won't click.",
+    a1: "One box, three lids.", a2: "Too small.", a3: "Round, on a rectangular box.", a4: "Too big.",
     a5: "Into the bin it goes, in perfect condition.",
     b1: "Three boxes of the same format: three heights, three materials.", b2: "One lid of that format closes them all.",
     b3: "And the lids swap freely.",
@@ -94,12 +93,11 @@ const T = {
     pb_title: "The lid drawer",
     pb_p1: "Every brand has its own dimensions, often every range within a brand. A lid that is lost, broken or warped in the dishwasher leaves its box almost useless.",
     pb_p2: "The box ends up in the bin in good condition, and a whole new set gets bought. Food storage boxes exist to avoid single-use packaging: every box thrown out for want of a lid works against that purpose.",
-    idea_title: "Three or four common formats",
+    idea_title: "Three common formats",
     idea_p1: "A format is defined by two things: the dimensions of the rim, seen from above, and the profile that takes the lid. A lid of one format closes every box of that format, whatever the brand or the material: plastic, glass, steel.",
     idea_p2: "Manufacturers keep control of height, materials, colours, closing system and price.",
     idea_ikea: "It can be done: IKEA already closes its 1-litre plastic and glass boxes with the same lid.", idea_ikea_src: "See the product",
     idea_note: "Starting proposal, open for discussion. The dimensions follow Gastronorm, used in professional kitchens since 1964: they combine on a tray with no wasted space.",
-    round_tbd: "round, diameter to be defined",
     tray_caption: "53 × 32.5 cm tray, no wasted space",
     h_title: "Height stays free",
     h_p1: "A format sets the rim. The box can be shallow for a single portion or deep for soup. The same lid closes both.",
@@ -201,65 +199,150 @@ function move(el, frames, dur, easing = "cubic-bezier(.45,.05,.3,1)") {
 }
 function resetAll(svg) { svg.querySelectorAll("g[id]").forEach(g => g.getAnimations().forEach(a => a.cancel())); }
 
-// Position de repos des couvercles (centre) et position cible sur la boîte : (400, 198)
-const lidRest = { "a-lidA": [110, 264], "a-lidB": [110, 292], "a-lidC": [110, 278] };
-const off = (id, x, y) => `translate(${x - lidRest[id][0]}px, ${y - lidRest[id][1]}px)`;
+/* Scènes en perspective cavalière : la profondeur part en diagonale vers le haut à droite. */
+const KX = 0.476, KY = -0.275; // décalage écran par unité de profondeur
+const FLOOR = 296;
+const P = pts => pts.map(p => p.map(v => Math.round(v * 10) / 10).join(",")).join(" ");
+
+// Boîte : coin avant-gauche du bas en (x, FLOOR). Renvoie le centre du plan du bord.
+function boxSVG(x, L, W, H, c) {
+  const dx = W * KX, dy = W * KY, top = FLOOR - H;
+  const ix = 6 + 6 * KX, iy = 6 * KY, iL = L - 12, iW = W - 12;
+  const s = `
+    <polygon class="box-stroke" fill="${c.side}" points="${P([[x + L, top], [x + L + dx, top + dy], [x + L + dx, FLOOR + dy], [x + L, FLOOR]])}"/>
+    <polygon class="box-stroke" fill="${c.rim}" points="${P([[x, top], [x + L, top], [x + L + dx, top + dy], [x + dx, top + dy]])}"/>
+    <polygon fill="${c.inside}" points="${P([[x + ix, top + iy], [x + ix + iL, top + iy], [x + ix + iL + iW * KX, top + iy + iW * KY], [x + ix + iW * KX, top + iy + iW * KY]])}"/>
+    <rect class="box-stroke" fill="${c.front}" x="${x}" y="${top}" width="${L}" height="${H}" rx="3"/>`;
+  return { svg: s, cx: x + L / 2 + dx / 2, cy: top + dy / 2, front: [x, top, L, H], side: [x + L, top, dx, dy, H] };
+}
+// Couvercle rectangulaire centré sur (0,0) = centre du plan du bord ; t épaisseur, sk rebord descendant.
+function lidRectSVG(L, W, t, sk, c, letter) {
+  const dx = W * KX, dy = W * KY;
+  const x0 = -L / 2 - dx / 2, y0 = -dy / 2; // avant-gauche, au niveau du bord
+  const s = `
+    <polygon fill="${c.top}" class="box-stroke" points="${P([[x0, y0 - t], [x0 + L, y0 - t], [x0 + L + dx, y0 - t + dy], [x0 + dx, y0 - t + dy]])}"/>
+    <polygon fill="${c.side}" class="box-stroke" points="${P([[x0 + L, y0 - t], [x0 + L + dx, y0 - t + dy], [x0 + L + dx, y0 + sk + dy], [x0 + L, y0 + sk]])}"/>
+    <rect fill="${c.front}" class="box-stroke" x="${x0}" y="${y0 - t}" width="${L}" height="${t + sk}" rx="3"/>
+    ${sk > 0 ? `<rect fill="${c.skirt || c.side}" x="${x0 + 1}" y="${y0}" width="${L - 2}" height="${sk - 1}" rx="2"/>` : ""}
+    ${letter ? `<text class="lid-letter" x="${x0 + L / 2}" y="${y0 + sk - 2.5}">${letter}</text>` : ""}`;
+  return s;
+}
+// Couvercle rond : ellipses empilées, vue légèrement de dessus.
+function lidRoundSVG(D, t, sk, c) {
+  const rx = D / 2, ry = D * 0.16;
+  return `<g transform="rotate(-6)">
+    <ellipse cx="0" cy="${sk}" rx="${rx}" ry="${ry}" fill="${c.side}" class="box-stroke"/>
+    <rect x="${-rx}" y="${-t}" width="${2 * rx}" height="${t + sk}" fill="${c.side}"/>
+    <path d="M${-rx} ${-t} V${sk} M${rx} ${-t} V${sk}" class="box-stroke" fill="none"/>
+    <ellipse cx="0" cy="${-t}" rx="${rx}" ry="${ry}" fill="${c.top}" class="box-stroke"/></g>`;
+}
+const COL = {
+  plastic: { front: "url(#gPlastic)", side: "#eaa06c", rim: "#f2a46e", inside: "#d9844e" },
+  glass:   { front: "url(#gGlass)",   side: "#a9cfdc", rim: "#cfe7ef", inside: "#9cc4d2" },
+  steel:   { front: "url(#gSteel)",   side: "#a9b0b7", rim: "#d9dde1", inside: "#8f979e" },
+  std:     { top: "#33a587", front: "#17876d", side: "#0f6553", skirt: "#12755e" },
+  lidS:    { top: "#b6ddb4", front: "#9ccf9a", side: "#7fb57d" },
+  lidR:    { top: "#dcc0e6", front: "#c49bd1", side: "#a77db6" },
+  lidB:    { top: "#a9c9de", front: "#7aa6c2", side: "#5f8ba8" }
+};
+const counter = `<polygon points="0,${FLOOR + 6} 800,${FLOOR + 6} 800,${FLOOR - 52} 0,${FLOOR - 52}" fill="#f3ece1"/>
+  <line x1="0" y1="${FLOOR + 6.5}" x2="800" y2="${FLOOR + 6.5}" class="floor"/>`;
+const wrap = (id, x, y, inner, extra = "") => `<g transform="translate(${x} ${y})" ${extra}><g id="${id}">${inner}</g></g>`;
+
+// ----- Scène A : aujourd'hui
+const A = { box: boxSVG(320, 150, 100, 82, COL.plastic) };
+A.rest = { "a-lidB": [150, 280], "a-lidR": [150, 262], "a-lidS": [150, 245] };
+A.target = [A.box.cx, A.box.cy];
+(function buildA() {
+  const f = A.box.front, sd = A.box.side;
+  // le petit couvercle disparaît derrière la façade et le flanc quand il tombe dans la boîte
+  const hole = `M0 0H800V400H0Z M${f[0]} ${f[1]}H${f[0] + f[2]}L${sd[0] + sd[2]} ${sd[1] + sd[3]}V${sd[1] + sd[3] + sd[4]}L${sd[0]} ${f[1] + f[3]}H${f[0]}Z`;
+  $("scene-a").innerHTML = `${counter}
+    <defs><clipPath id="clipBox" clipPathUnits="userSpaceOnUse"><path clip-rule="evenodd" d="${hole}"/></clipPath></defs>
+    <g class="bin">
+      <path d="M642 228 L654 298 A36 8 0 0 0 726 298 L738 228 Z" class="bin-body"/>
+      <path d="M664 244 l4 46 M690 246 v46 M716 244 l-4 46" class="bin-lines"/>
+      <g id="a-binlid"><ellipse cx="690" cy="226" rx="52" ry="11" class="bin-lid"/><rect x="680" y="212" width="20" height="9" rx="3" class="bin-lid"/></g>
+    </g>
+    <g id="a-box">${A.box.svg}</g>
+    ${wrap("a-lidB", ...A.rest["a-lidB"], lidRectSVG(196, 128, 7, 7, COL.lidB))}
+    ${wrap("a-lidR", ...A.rest["a-lidR"], lidRoundSVG(150, 7, 6, COL.lidR))}
+    <g clip-path="url(#clipBox)">${wrap("a-lidS", ...A.rest["a-lidS"], lidRectSVG(104, 66, 7, 6, COL.lidS))}</g>
+    <g id="a-mark" class="mark bad" opacity="0"><circle cx="${A.target[0]}" cy="125" r="20"/><path d="M${A.target[0] - 9} 116 l18 18 M${A.target[0] + 9} 116 l-18 18"/></g>`;
+})();
+const offA = (id, x, y) => `translate(${x - A.rest[id][0]}px, ${y - A.rest[id][1]}px)`;
 
 async function sceneA(token) {
   const svg = $("scene-a"); resetAll(svg);
-  const A = $("a-lidA"), B = $("a-lidB"), C = $("a-lidC"), box = $("a-box"), mark = $("a-mark"), binlid = $("a-binlid");
+  const S = $("a-lidS"), R = $("a-lidR"), B = $("a-lidB"), box = $("a-box"), mark = $("a-mark"), binlid = $("a-binlid");
+  const [tx, ty] = A.target;
   const ok = () => token === run;
-  const fail = async () => { await move(mark, [{ opacity: 0 }, { opacity: 1 }], 150); await wait(500); await move(mark, [{ opacity: 1 }, { opacity: 0 }], 200); };
+  const fail = async () => { await move(mark, [{ opacity: 0 }, { opacity: 1 }], 150); await wait(550); await move(mark, [{ opacity: 1 }, { opacity: 0 }], 200); };
   caption("a1"); await wait(1100); if (!ok()) return;
 
-  // A : trop petit, tombe dans la boîte
+  // trop petit : tombe dans la boîte
   caption("a2");
-  await move(A, [{ transform: "none" }, { transform: off("a-lidA", 400, 120) }], 700);
-  await move(A, [{ transform: off("a-lidA", 400, 120) }, { transform: off("a-lidA", 400, 230) + " rotate(8deg)" }], 380, "cubic-bezier(.5,0,1,1)");
+  await move(S, [{ transform: "none" }, { transform: offA("a-lidS", tx, ty - 70) }], 750);
+  await move(S, [{ transform: offA("a-lidS", tx, ty - 70) }, { transform: offA("a-lidS", tx + 4, ty + 26) + " rotate(9deg)" }], 420, "cubic-bezier(.5,0,1,1)");
   if (!ok()) return; await fail();
-  await move(A, [{ transform: off("a-lidA", 400, 230) + " rotate(8deg)" }, { transform: off("a-lidA", 400, 120) }, { transform: "none" }], 900);
+  await move(S, [{ transform: offA("a-lidS", tx + 4, ty + 26) + " rotate(9deg)" }, { transform: offA("a-lidS", tx, ty - 70) }, { transform: "none" }], 950);
   if (!ok()) return;
 
-  // B : trop grand, glisse
+  // rond sur rectangulaire : bascule et ne ferme rien
   caption("a3");
-  await move(B, [{ transform: "none" }, { transform: off("a-lidB", 400, 120) }], 700);
-  await move(B, [{ transform: off("a-lidB", 400, 120) }, { transform: off("a-lidB", 400, 198) }], 320, "cubic-bezier(.5,0,1,1)");
+  await move(R, [{ transform: "none" }, { transform: offA("a-lidR", tx, ty - 70) }], 750);
+  await move(R, [{ transform: offA("a-lidR", tx, ty - 70) }, { transform: offA("a-lidR", tx, ty - 4) }], 340, "cubic-bezier(.5,0,1,1)");
   if (!ok()) return;
-  await move(B, [{ transform: off("a-lidB", 400, 198) }, { transform: off("a-lidB", 470, 222) + " rotate(28deg)" }, { transform: off("a-lidB", 520, 290) + " rotate(4deg)" }], 600, "ease-in");
+  await move(R, [{ transform: offA("a-lidR", tx, ty - 4) }, { transform: offA("a-lidR", tx + 6, ty - 10) + " rotate(-9deg)" },
+                 { transform: offA("a-lidR", tx - 4, ty - 4) + " rotate(6deg)" }, { transform: offA("a-lidR", tx + 3, ty - 8) + " rotate(-5deg)" }], 800, "ease-out");
   await fail(); if (!ok()) return;
-  await move(B, [{ transform: off("a-lidB", 520, 290) + " rotate(4deg)" }, { transform: "none" }], 800);
+  await move(R, [{ transform: offA("a-lidR", tx + 3, ty - 8) + " rotate(-5deg)" }, { transform: "none" }], 850);
   if (!ok()) return;
 
-  // C : bonne taille, ne clipse pas
+  // trop grand : glisse et tombe
   caption("a4");
-  await move(C, [{ transform: "none" }, { transform: off("a-lidC", 400, 120) }], 700);
-  await move(C, [{ transform: off("a-lidC", 400, 120) }, { transform: off("a-lidC", 400, 196) }], 320, "cubic-bezier(.5,0,1,1)");
+  await move(B, [{ transform: "none" }, { transform: offA("a-lidB", tx, ty - 70) }], 750);
+  await move(B, [{ transform: offA("a-lidB", tx, ty - 70) }, { transform: offA("a-lidB", tx, ty + 2) }], 340, "cubic-bezier(.5,0,1,1)");
   if (!ok()) return;
-  await move(C, [{ transform: off("a-lidC", 400, 196) }, { transform: off("a-lidC", 405, 172) + " rotate(-12deg)" }, { transform: off("a-lidC", 398, 196) + " rotate(4deg)" }, { transform: off("a-lidC", 403, 180) + " rotate(-7deg)" }], 700, "ease-out");
+  await move(B, [{ transform: offA("a-lidB", tx, ty + 2) }, { transform: offA("a-lidB", tx + 70, ty + 30) + " rotate(22deg)" },
+                 { transform: offA("a-lidB", tx + 95, 282) + " rotate(3deg)" }], 650, "ease-in");
   await fail(); if (!ok()) return;
-  await move(C, [{ transform: off("a-lidC", 403, 180) + " rotate(-7deg)" }, { transform: "none" }], 800);
+  await move(B, [{ transform: offA("a-lidB", tx + 95, 282) + " rotate(3deg)" }, { transform: "none" }], 850);
   if (!ok()) return;
 
   // la boîte part à la poubelle
   caption("a5");
-  await move(binlid, [{ transform: "none" }, { transform: "rotate(-35deg)" }], 400);
-  await move(box, [{ transform: "none" }, { transform: "translate(140px,-110px) rotate(18deg)" }, { transform: "translate(295px,-60px) rotate(38deg)" }, { transform: "translate(295px,30px) rotate(45deg) scale(.85)", opacity: 0 }], 1500, "ease-in-out");
-  await move(binlid, [{ transform: "rotate(-35deg)" }, { transform: "none" }], 350);
+  await move(binlid, [{ transform: "none" }, { transform: "translate(-30px,-20px) rotate(-30deg)" }], 400);
+  await move(box, [{ transform: "none" }, { transform: "translate(150px,-120px) rotate(16deg)" }, { transform: "translate(300px,-90px) rotate(34deg) scale(.8)" },
+                   { transform: "translate(315px,-10px) rotate(40deg) scale(.6)", opacity: 0 }], 1600, "ease-in-out");
+  await move(binlid, [{ transform: "translate(-30px,-20px) rotate(-30deg)" }, { transform: "none" }], 350);
 }
 
-const lidB = { "b-lid1": [200, 234], "b-lid2": [400, 194], "b-lid3": [600, 144] };
+// ----- Scène B : formats communs
+const Bx = [
+  { box: boxSVG(90, 150, 100, 55, COL.glass), tag: "b_glass", letter: "A" },
+  { box: boxSVG(320, 150, 100, 95, COL.plastic), tag: "b_plastic", letter: "B" },
+  { box: boxSVG(550, 150, 100, 140, COL.steel), tag: "b_steel", letter: "C" }
+];
+(function buildB() {
+  $("scene-b").innerHTML = `${counter}
+    ${Bx.map(b => b.box.svg).join("")}
+    ${Bx.map((b, i) => `<text x="${b.box.front[0] + 75}" y="${FLOOR + 24}" class="tag" data-i18n="${b.tag}"></text>`).join("")}
+    ${Bx.map((b, i) => wrap("b-lid" + (i + 1), b.box.cx, b.box.cy, lidRectSVG(156, 106, 7, 10, COL.std, b.letter))).join("")}
+    <g id="b-checks" opacity="0">${Bx.map(b => `<g class="mark good"><circle cx="${b.box.cx}" cy="${b.box.cy - 42}" r="16"/><path d="M${b.box.cx - 8} ${b.box.cy - 42} l6 6 l11 -12"/></g>`).join("")}</g>`;
+})();
+
 async function sceneB(token) {
   const svg = $("scene-b"); resetAll(svg);
   const ok = () => token === run;
   const L = ["b-lid1", "b-lid2", "b-lid3"].map($);
   const checks = $("b-checks");
-  // couvercles au-dessus, hors champ
-  L.forEach((l, i) => l.animate([{ transform: `translate(0, ${-lidB[l.id][1] - 30}px)` }], { duration: 1, fill: "forwards" }));
+  L.forEach((l, i) => l.animate([{ transform: `translate(0, ${-Bx[i].box.cy - 40}px)` }], { duration: 1, fill: "forwards" }));
   checks.animate([{ opacity: 0 }], { duration: 1, fill: "forwards" });
   caption("b1"); await wait(1500); if (!ok()) return;
   caption("b2");
-  for (const l of L) {
-    const y0 = -lidB[l.id][1] - 30;
+  for (const [i, l] of L.entries()) {
+    const y0 = -Bx[i].box.cy - 40;
     move(l, [{ transform: `translate(0, ${y0}px)` }, { transform: "translate(0, 4px)", offset: .85 }, { transform: "translate(0,0)" }], 750, "cubic-bezier(.5,0,.7,1)");
     await wait(260);
   }
@@ -268,11 +351,10 @@ async function sceneB(token) {
   await wait(1200); if (!ok()) return;
   await move(checks, [{ opacity: 1 }, { opacity: 0 }], 250);
   caption("b3");
-  // échange : couvercle 1 sur la boîte 3, couvercle 3 sur la boîte 1
-  const l1 = L[0], l3 = L[2];
-  const dx = 400, dy = 144 - 234;
-  move(l1, [{ transform: "none" }, { transform: `translate(0px, -120px)` }, { transform: `translate(${dx}px, ${dy - 80}px)` }, { transform: `translate(${dx}px, ${dy}px)` }], 1600);
-  await move(l3, [{ transform: "none" }, { transform: `translate(0px, -60px)` }, { transform: `translate(${-dx}px, ${-dy - 140}px)` }, { transform: `translate(${-dx}px, ${-dy}px)` }], 1600);
+  // échange : A sur la boîte en inox, C sur la boîte en verre
+  const dx = Bx[2].box.cx - Bx[0].box.cx, dy = Bx[2].box.cy - Bx[0].box.cy;
+  move(L[0], [{ transform: "none" }, { transform: "translate(0px, -110px)" }, { transform: `translate(${dx}px, ${dy - 70}px)` }, { transform: `translate(${dx}px, ${dy}px)` }], 1600);
+  await move(L[2], [{ transform: "none" }, { transform: "translate(0px, -50px)" }, { transform: `translate(${-dx}px, ${-dy - 130}px)` }, { transform: `translate(${-dx}px, ${-dy}px)` }], 1600);
   if (!ok()) return;
   await move(checks, [{ opacity: 0 }, { opacity: 1 }], 300);
 }

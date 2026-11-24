@@ -48,47 +48,9 @@
       <button type="button" role="tab" id="tab-b" aria-selected="false" data-scene="b" data-i18n="tab_tomorrow">Avec des formats communs</button>
     </div>
 
-    <svg id="scene-a" class="scene" viewBox="0 70 800 270" role="img" aria-labelledby="cap">
-      <line x1="0" y1="300.5" x2="800" y2="300.5" class="floor"/>
-      <!-- bin -->
-      <g class="bin">
-        <path d="M640 226 h110 l-10 74 h-90 z" class="bin-body"/>
-        <path d="M662 244 v44 M695 244 v44 M728 244 v44" class="bin-lines"/>
-        <g id="a-binlid"><rect x="632" y="214" width="126" height="10" rx="4" class="bin-lid"/><rect x="683" y="207" width="24" height="8" rx="3" class="bin-lid"/></g>
-      </g>
-      <!-- the box -->
-      <g id="a-box">
-        <path d="M332 210 h136 v76 a14 14 0 0 1 -14 14 h-108 a14 14 0 0 1 -14 -14 z" fill="url(#gPlastic)" class="box-stroke"/>
-        <rect x="326" y="204" width="148" height="9" rx="3" fill="#f2a46e" class="box-stroke"/>
-      </g>
-      <!-- lids pile -->
-      <g transform="translate(110 292)"><g id="a-lidB"><rect x="-95" y="-6" width="190" height="12" rx="5" fill="#7aa6c2" class="box-stroke"/><rect x="-82" y="-10" width="164" height="5" rx="2" fill="#94bcd6"/></g></g>
-      <g transform="translate(110 278)"><g id="a-lidC"><rect x="-75" y="-6" width="150" height="12" rx="5" fill="#c49bd1" class="box-stroke"/><rect x="-75" y="4" width="10" height="10" rx="2" fill="#c49bd1" class="box-stroke"/><rect x="65" y="4" width="10" height="10" rx="2" fill="#c49bd1" class="box-stroke"/></g></g>
-      <g transform="translate(110 264)"><g id="a-lidA"><rect x="-50" y="-6" width="100" height="12" rx="5" fill="#9ccf9a" class="box-stroke"/><rect x="-40" y="-10" width="80" height="5" rx="2" fill="#b6ddb4"/></g></g>
-      <g id="a-mark" class="mark bad" opacity="0"><circle cx="400" cy="140" r="20"/><path d="M391 131 l18 18 M409 131 l-18 18"/></g>
-    </svg>
+    <svg id="scene-a" class="scene" viewBox="0 60 800 280" role="img" aria-labelledby="cap"></svg>
 
-    <svg id="scene-b" class="scene" viewBox="0 70 800 270" role="img" aria-labelledby="cap" hidden>
-      <line x1="0" y1="300.5" x2="800" y2="300.5" class="floor"/>
-      <!-- glass, low -->
-      <g><path d="M132 246 h136 v40 a14 14 0 0 1 -14 14 h-108 a14 14 0 0 1 -14 -14 z" fill="url(#gGlass)" class="box-stroke"/><rect x="126" y="240" width="148" height="9" rx="3" fill="#cfe7ef" class="box-stroke"/></g>
-      <!-- plastic, mid -->
-      <g><path d="M332 206 h136 v80 a14 14 0 0 1 -14 14 h-108 a14 14 0 0 1 -14 -14 z" fill="url(#gPlastic)" class="box-stroke"/><rect x="326" y="200" width="148" height="9" rx="3" fill="#f2a46e" class="box-stroke"/></g>
-      <!-- steel, tall -->
-      <g><path d="M532 156 h136 v130 a14 14 0 0 1 -14 14 h-108 a14 14 0 0 1 -14 -14 z" fill="url(#gSteel)" class="box-stroke"/><rect x="526" y="150" width="148" height="9" rx="3" fill="#d9dde1" class="box-stroke"/></g>
-      <text x="200" y="326" class="tag" data-i18n="b_glass">verre</text>
-      <text x="400" y="326" class="tag" data-i18n="b_plastic">plastique</text>
-      <text x="600" y="326" class="tag" data-i18n="b_steel">inox</text>
-      <!-- identical lids, start above -->
-      <g transform="translate(200 234)"><g id="b-lid1" class="lid-std"><rect x="-79" y="-5" width="158" height="22" rx="5"/><rect x="-79" y="6" width="158" height="11" rx="4" class="skirt"/><rect x="-62" y="-10" width="124" height="6" rx="2" class="lid-top"/><text x="0" y="4" class="lid-letter">A</text></g></g>
-      <g transform="translate(400 194)"><g id="b-lid2" class="lid-std"><rect x="-79" y="-5" width="158" height="22" rx="5"/><rect x="-79" y="6" width="158" height="11" rx="4" class="skirt"/><rect x="-62" y="-10" width="124" height="6" rx="2" class="lid-top"/><text x="0" y="4" class="lid-letter">B</text></g></g>
-      <g transform="translate(600 144)"><g id="b-lid3" class="lid-std"><rect x="-79" y="-5" width="158" height="22" rx="5"/><rect x="-79" y="6" width="158" height="11" rx="4" class="skirt"/><rect x="-62" y="-10" width="124" height="6" rx="2" class="lid-top"/><text x="0" y="4" class="lid-letter">C</text></g></g>
-      <g id="b-checks" opacity="0">
-        <g class="mark good"><circle cx="200" cy="200" r="16"/><path d="M192 200 l6 6 l11 -12"/></g>
-        <g class="mark good"><circle cx="400" cy="160" r="16"/><path d="M392 160 l6 6 l11 -12"/></g>
-        <g class="mark good"><circle cx="600" cy="110" r="16"/><path d="M592 110 l6 6 l11 -12"/></g>
-      </g>
-    </svg>
+    <svg id="scene-b" class="scene" viewBox="0 60 800 280" role="img" aria-labelledby="cap" hidden></svg>
 
     <figcaption>
       <p id="cap" class="caption" aria-live="polite">&nbsp;</p>
@@ -113,7 +75,7 @@
 
 <!-- IDEA -->
 <section id="idee" class="wrap">
-  <h2 data-i18n="idea_title">Trois ou quatre formats communs</h2>
+  <h2 data-i18n="idea_title">Trois formats communs</h2>
   <div class="two">
     <div>
       <p data-i18n="idea_p1">Un format est défini par deux choses : les dimensions du bord, vu de dessus, et le profil qui reçoit le couvercle. Un couvercle d'un format ferme toutes les boîtes de ce format, de toute marque et de tout matériau : plastique, verre, inox.</p>
@@ -124,7 +86,6 @@
         <li><span class="sw f1"></span><b>UE-1</b> 176 × 108 mm</li>
         <li><span class="sw f2"></span><b>UE-2</b> 176 × 162 mm</li>
         <li><span class="sw f3"></span><b>UE-3</b> 265 × 162 mm</li>
-        <li><span class="sw fr"></span><b>UE-R</b> <span data-i18n="round_tbd">ronde, diamètre à définir</span></li>
       </ul>
     </div>
     <figure class="tray">
