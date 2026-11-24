@@ -19,7 +19,7 @@ const T = {
     tx_pre_h: "Proposition de résolution européenne", tx_pre_p: "Le texte qu'un député ou une sénatrice peut déposer pour demander au Gouvernement de porter le projet à Bruxelles.",
     tx_fr: "Lire en français (PDF)", tx_en: "Read in English (PDF)",
     cl_title: "Un bord commun, des fermetures au choix",
-    cl_lead: "La norme fixe le bord de la boîte : ses dimensions et une lèvre qui dépasse vers l'extérieur. Chaque fabricant accroche son couvercle à cette lèvre avec le système de son choix. Tous ces couvercles ferment toutes les boîtes du même format.",
+    cl_lead: "La norme fixe le bord de la boîte : ses dimensions et une lèvre qui dépasse vers l'extérieur. Chaque fabricant accroche son couvercle à cette lèvre avec le système de son choix, et choisit son épaisseur, sa couleur et sa matière. Tous ces couvercles ferment toutes les boîtes du même format.",
     cl_press_h: "À pression", cl_press: "Un rebord souple passe sous la lèvre d'une simple pression. Une languette aide à l'ouvrir.",
     cl_clips_h: "À clapets", cl_clips: "Quatre clapets à charnière se rabattent et accrochent la lèvre. Ils serrent un joint en silicone posé sur le bord.",
     cl_glass_h: "En verre", cl_glass: "Une plaque de verre bordée de silicone, posée sur la lèvre, sans verrou. Pour le four, le frigo ou la table.",
@@ -95,7 +95,7 @@ const T = {
     tx_pre_h: "Draft European resolution", tx_pre_p: "The text a French MP or senator can table to ask the Government to carry the project to Brussels. French only.",
     tx_fr: "Lire en français (PDF)", tx_en: "Read in English (PDF)",
     cl_title: "A common rim, a choice of closures",
-    cl_lead: "The standard sets the rim of the box: its dimensions and a lip that sticks out. Each manufacturer attaches its lid to that lip with the system of its choice. All these lids close every box of the same format.",
+    cl_lead: "The standard sets the rim of the box: its dimensions and a lip that sticks out. Each manufacturer attaches its lid to that lip with the system of its choice, and picks its thickness, colour and material. All these lids close every box of the same format.",
     cl_press_h: "Press-on", cl_press: "A flexible skirt slips under the lip with a simple press. A tab helps to open it.",
     cl_clips_h: "Clip-lock", cl_clips: "Four hinged clips fold down and catch the lip. They press a silicone seal onto the rim.",
     cl_glass_h: "Glass", cl_glass: "A glass plate with a silicone edge, resting on the lip, with no lock. For the oven, the fridge or the table.",
@@ -504,19 +504,20 @@ const RICE = (() => {
 function closureSVG(kind) {
   const box = `${RICE}<path d="M70 100 V62 H96 V70 H78 V100 Z" class="cl-box"/>
     <rect x="69" y="61" width="28" height="10" rx="2" class="cl-lip"/>`;
-  const lidPlate = (y, h = 6) => `<rect x="20" y="${y}" width="84" height="${h}" rx="2.5" class="cl-lid"/>`;
+  // chaque marque son épaisseur et sa couleur : la compatibilité ne tient qu'à la lèvre
+  const lidPlate = (y, h, cls) => `<rect x="20" y="${y}" width="84" height="${h}" rx="${R1(h / 2.4)}" class="${cls}"/>`;
   let lid = "";
-  if (kind === "press") lid = lidPlate(52) +
+  if (kind === "press") lid = lidPlate(54, 4, "cl-lid press") +
     // rebord souple : descend sur la lèvre, bourrelet qui passe dessous, languette pour l'ouvrir
-    `<path d="M98 54 h6 V75 l9 8 -3 3 -10 -8 h-7 v-5 h5 V54 Z" class="cl-lid"/>`;
-  if (kind === "clips") lid = lidPlate(50) +
+    `<path d="M98 54 h6 V75 l9 8 -3 3 -10 -8 h-7 v-5 h5 V54 Z" class="cl-lid press"/>`;
+  if (kind === "clips") lid = lidPlate(47, 9, "cl-lid clips") +
     `<rect x="70" y="56" width="24" height="6" rx="3" class="cl-seal"/>` +
     // charnière fine au bord du couvercle, clapet avec crochet sous la lèvre et ergot de préhension
-    `<path d="M104 52 q3 0 3 3" class="cl-hinge"/>
+    `<path d="M104 51 q3 0 3 3" class="cl-hinge"/>
      <path d="M104 56 h6 V84 l6 9 -3 2 -8 -9 V77 H90 v-5 h14 Z" class="cl-clip"/>`;
-  if (kind === "glass") lid = `<rect x="20" y="49" width="82" height="9" rx="2" class="cl-glass"/>` +
+  if (kind === "glass") lid = `<rect x="20" y="45" width="82" height="13" rx="2" class="cl-glass"/>` +
     // bordure en silicone qui coiffe la lèvre, sans verrou
-    `<path d="M96 48 h8 q3 0 3 3 V71 h-5 V60 H96 Z" class="cl-band"/>`;
+    `<path d="M96 44 h8 q3 0 3 3 V71 h-5 V60 H96 Z" class="cl-band"/>`;
   return box + lid;
 }
 function renderClosures() { document.querySelectorAll(".cl-ill").forEach(s => { s.innerHTML = closureSVG(s.dataset.cl); }); }

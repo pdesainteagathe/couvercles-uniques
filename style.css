@@ -227,10 +227,12 @@ input[type=range] { width: 100%; accent-color: var(--teal); height: 28px; }
 .cl-ill { width: 100%; height: auto; display: block; background: #f4efe6; border-radius: 10px; }
 .cl-box { fill: #f6b98a; stroke: #b9774a; stroke-width: 1; }
 .cl-lip { fill: none; stroke: var(--teal); stroke-width: 1.6; stroke-dasharray: 3 2; }
-.cl-lid, .cl-clip { fill: #e3f1f5; fill-opacity: .85; stroke: #6f9fb0; stroke-width: .8; stroke-linejoin: round; }
-.cl-hinge { fill: none; stroke: #6f9fb0; stroke-width: 1.2; }
+.cl-lid, .cl-clip { fill-opacity: .9; stroke-width: .8; stroke-linejoin: round; }
+.cl-lid.press { fill: #f2c14e; stroke: #b8892a; }
+.cl-lid.clips, .cl-clip { fill: #d6e9f8; stroke: #5a86b0; }
+.cl-hinge { fill: none; stroke: #5a86b0; stroke-width: 1.2; }
 .cl-seal { fill: #17a2a8; }
 .cl-glass { fill: #cfe7ef; fill-opacity: .8; stroke: #7fb0c2; stroke-width: .8; }
-.cl-band { fill: #17a2a8; stroke: #0e7a7f; stroke-width: .6; }
+.cl-band { fill: #d9532f; stroke: #a63c1f; stroke-width: .6; }
 .cl-rice { fill: #efe4c8; }
 .cl-grain { fill: #fffaf0; stroke: #d9cba6; stroke-width: .3; }
