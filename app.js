@@ -38,7 +38,7 @@ const T = {
     tray_caption: "plateau de 53 × 32,5 cm, sans place perdue",
     h_title: "La hauteur reste libre",
     h_p1: "Un format fixe le bord. La boîte peut être basse pour une portion, ou haute pour une soupe. Le même couvercle ferme les deux.",
-    h_label: "Hauteur :", h_vol: "Contenance",
+    dim_len: "longueur", dim_wid: "largeur", dim_h: "hauteur libre", h_label: "Hauteur :", h_vol: "Contenance",
     h_note: "Calcul indicatif : parois de 6 mm et fond de 8 mm supposés.",
     pr_title: "Ça a déjà marché",
     pr_usbc: "Depuis le 28 décembre 2024, les téléphones neufs vendus dans l'Union européenne se rechargent par un port USB-C. La Commission estimait à 11\u00a0000 tonnes par an les déchets de chargeurs jetés ou inutilisés.",
@@ -103,7 +103,7 @@ const T = {
     tray_caption: "53 × 32.5 cm tray, no wasted space",
     h_title: "Height stays free",
     h_p1: "A format sets the rim. The box can be shallow for a single portion or deep for soup. The same lid closes both.",
-    h_label: "Height:", h_vol: "Capacity",
+    dim_len: "length", dim_wid: "width", dim_h: "free height", h_label: "Height:", h_vol: "Capacity",
     h_note: "Rough estimate: 6 mm walls and an 8 mm base assumed.",
     pr_title: "It has worked before",
     pr_usbc: "Since 28 December 2024, new phones sold in the European Union charge through a USB-C port. The Commission estimated discarded and unused chargers at 11,000 tonnes of waste a year.",
@@ -447,13 +447,31 @@ function updateHeight() {
   $("hval").textContent = `${nf.format(h / 10)} ${t("cm")}`;
   $("vol").textContent = `${nf.format(litres)} ${t("litre")}`;
   // même rendu que l'animation : empreinte arrondie, couvercle à rebord descendant, pâtes dedans
-  const floor = 290, X = 205, W2 = W * -KY / 2;
+  const floor = 280, X = 285;
   const b = boxSVG({ X, Yfloor: floor, L, W, H: h, r: 20, mat: "plastic", food: "pasta" });
   const lid = lidSVG({ L: L + 8, W: W + 8, r: 24, t: 6, sk: 11, col: LID.std });
+  // cotes : coins de l'empreinte au sol (avant-gauche, avant-droit, arrière-droit)
+  const fl = [X - L / 2 - W / 2 * KX, floor], fr = [X + L / 2 - W / 2 * KX, floor], br = [X + L / 2 + W / 2 * KX, floor + W * KY];
+  const nf0 = new Intl.NumberFormat(lang === "fr" ? "fr-FR" : "en-GB");
+  const lab = (k, v) => `${t(k)} ${nf0.format(v)} mm`;
+  const yL = floor + 16;                       // longueur, sous l'arête avant
+  const o = 16, ox = o * 0.866, oy = o * 0.5;  // largeur, décalée perpendiculairement à l'arête droite
+  const xH = fl[0] - 16;                       // hauteur, à gauche de l'arête avant gauche
+  const ang = Math.atan2(br[1] - fr[1], br[0] - fr[0]) * 180 / Math.PI;
+  const mx = (fr[0] + br[0]) / 2 + ox + 10, my = (fr[1] + br[1]) / 2 + oy + 10;
   $("hdraw").innerHTML = b.svg + `<g transform="translate(${b.cx} ${b.cy})">${lid}</g>
-    <text class="hdim" x="${R1(b.frontX)}" y="${floor + 24}">${L} mm</text>
-    <text class="hdim start" x="${R1(X + L / 2 + W / 2 * KX + 10)}" y="${R1(floor - W2 - 6)}">${W} mm</text>
-    <text class="hdim strong" x="${R1(b.frontX)}" y="${R1(floor - h / 2 + 10)}">${h} mm</text>`;
+    <g class="dim">
+      <path class="ext" d="M${R1(fl[0])} ${floor + 3} V${yL + 4} M${R1(fr[0])} ${floor + 3} V${yL + 4}"/>
+      <path class="dl" d="M${R1(fl[0])} ${yL} H${R1(fr[0])}" marker-start="url(#arr)" marker-end="url(#arr)"/>
+      <text class="hdim" x="${R1((fl[0] + fr[0]) / 2)}" y="${yL + 18}">${lab("dim_len", L)}</text>
+      <path class="ext" d="M${R1(fr[0] + 3)} ${R1(fr[1] + 2)} L${R1(fr[0] + ox + 3)} ${R1(fr[1] + oy + 2)} M${R1(br[0] + 3)} ${R1(br[1] + 2)} L${R1(br[0] + ox + 3)} ${R1(br[1] + oy + 2)}"/>
+      <path class="dl" d="M${R1(fr[0] + ox)} ${R1(fr[1] + oy)} L${R1(br[0] + ox)} ${R1(br[1] + oy)}" marker-start="url(#arr)" marker-end="url(#arr)"/>
+      <text class="hdim" transform="translate(${R1(mx)} ${R1(my)}) rotate(${R1(ang)})">${lab("dim_wid", W)}</text>
+      <path class="ext" d="M${R1(fl[0] - 3)} ${floor} H${R1(xH - 4)} M${R1(fl[0] - 3)} ${floor - h} H${R1(xH - 4)}"/>
+      <path class="dl strong" d="M${R1(xH)} ${floor} V${floor - h}" marker-start="url(#arrS)" marker-end="url(#arrS)"/>
+      <text class="hdim strong end" x="${R1(xH - 8)}" y="${R1(floor - h / 2 - 3)}">${t("dim_h")}</text>
+      <text class="hdim strong end" x="${R1(xH - 8)}" y="${R1(floor - h / 2 + 12)}">${nf0.format(h)} mm</text>
+    </g>`;
 }
 $("hslider").addEventListener("input", updateHeight);
 document.querySelectorAll(".fmt-pick button").forEach(b => b.addEventListener("click", () => {
