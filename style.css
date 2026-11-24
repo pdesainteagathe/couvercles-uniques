@@ -226,7 +226,6 @@ input[type=range] { width: 100%; accent-color: var(--teal); height: 28px; }
 .cl-card figcaption b { display: block; margin: .5rem 0 .2rem; font-size: 1.02rem; }
 .cl-ill { width: 100%; height: auto; display: block; background: #f4efe6; border-radius: 10px; }
 .cl-box { fill: #f6b98a; stroke: #b9774a; stroke-width: 1; }
-.cl-lip { fill: none; stroke: var(--teal); stroke-width: 1.6; stroke-dasharray: 3 2; }
 .cl-lid, .cl-clip { fill-opacity: .9; stroke-width: .8; stroke-linejoin: round; }
 .cl-lid.press { fill: #f2c14e; stroke: #b8892a; }
 .cl-lid.clips, .cl-clip { fill: #d6e9f8; stroke: #5a86b0; }
