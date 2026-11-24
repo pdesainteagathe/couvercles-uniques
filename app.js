@@ -4,8 +4,8 @@
 // Projet Supabase qui reçoit les réponses (voir supabase.sql). Vides : les réponses
 // restent dans le navigateur du visiteur et ne sont collectées nulle part.
 // La clé publique (« publishable » ou « anon ») est faite pour être visible dans une page web.
-const SUPABASE_URL = "";
-const SUPABASE_KEY = "";
+const SUPABASE_URL = "https://luwvrprsgnzywyzsweqv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_gkZrpFHZ5rHatHc56LPn3Q_FGYnHQAh";
 // Les résultats ne s'affichent qu'à partir de ce nombre de réponses.
 const MIN_RESULTS = 30;
 
