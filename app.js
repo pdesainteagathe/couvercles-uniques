@@ -44,8 +44,8 @@ const T = {
     idea_p2: "La hauteur, les matériaux, les couleurs, le système de fermeture et le prix restent au choix des fabricants.",
     idea_scope: "Seules les boîtes de conservation des aliments sont concernées. Les bocaux à couvercle vissé, les bouteilles, les gourdes et les emballages vendus pleins restent hors du champ.",
     idea_ikea: "IKEA ferme déjà ses boîtes de 1 litre en plastique et en verre avec le même couvercle.", idea_ikea_src: "Voir le produit",
-    idea_note: "Proposition de départ, ouverte à discussion. UE-3 reprend un format Gastronorm, utilisé dans les cuisines professionnelles depuis 1964. UE-2 est un carré de même largeur. UE-1, pour les sauces et les portions, est le quart de UE-2. Les formats carrés se ferment dans n'importe quel sens.",
-    tray_caption: "plateau Gastronorm de 53 × 32,5 cm",
+    idea_note: "Proposition de départ, ouverte à discussion. UE-1 est un carré de 8,1 cm et UE-2 un carré de 16,2 cm. La longueur de UE-3 vaut les deux côtés réunis. Les trois formats se rangent ensemble sans place perdue, et les carrés se ferment dans n'importe quel sens.",
+    tray_caption: "48,6 × 32,4 cm, sans place perdue",
     h_title: "Trois couvercles, tous les volumes",
     h_p1: "Chaque couvercle a une taille fixe. La hauteur de la boîte est libre. Une boîte basse pour une portion et une boîte haute pour une soupe prennent le même couvercle.",
     h_step1: "1. Choisissez un couvercle", h_step2: "2. Réglez la hauteur de la boîte", h_range: "{f} : de {a} à {b}",
@@ -63,6 +63,17 @@ const T = {
     sv_intro: "Anonyme, une minute. Nous n'avons trouvé aucune mesure du nombre de boîtes jetées faute de couvercle. Vos réponses donneront un premier chiffre à présenter aux élus.",
     sv_submit: "Envoyer mes réponses",
     sv_privacy: "Aucune donnée personnelle : ni nom, ni adresse email, ni cookie de suivi.",
+    ct_open: "Nous contacter",
+    ct_title: "Nous écrire",
+    ct_msg: "Votre message",
+    ct_email: "Votre adresse email (facultatif)",
+    ct_email_hint: "Seulement si vous attendez une réponse.",
+    ct_privacy: "Votre adresse sert uniquement à vous répondre. Elle n'est ni publiée ni transmise.",
+    ct_send: "Envoyer",
+    ct_close: "Fermer",
+    ct_thanks: "Message envoyé. Merci.",
+    ct_empty: "Écrivez un message avant d'envoyer.",
+    ct_bad_email: "Cette adresse email ne semble pas valide.",
     sv_missing: "Merci de répondre aux questions en rouge.",
     sv_error: "L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez.",
     res_title: "Les réponses jusqu'ici", res_n: "{n} réponses",
@@ -120,8 +131,8 @@ const T = {
     idea_p2: "Height, materials, colours, closing system and price remain up to each manufacturer.",
     idea_scope: "Only food storage boxes are concerned. Screw-top jars, bottles, flasks and packaging sold full stay out of scope.",
     idea_ikea: "IKEA already closes its 1-litre plastic and glass boxes with the same lid.", idea_ikea_src: "See the product",
-    idea_note: "Starting proposal, open for discussion. UE-3 follows a Gastronorm size, used in professional kitchens since 1964. UE-2 is a square of the same width. UE-1, for sauces and portions, is a quarter of UE-2. Square formats close either way round.",
-    tray_caption: "53 × 32.5 cm Gastronorm tray",
+    idea_note: "Starting proposal, open for discussion. UE-1 is an 8.1 cm square and UE-2 a 16.2 cm square. The length of UE-3 equals both sides together. The three formats fit together with no wasted space, and the squares close either way round.",
+    tray_caption: "48.6 × 32.4 cm, no wasted space",
     h_title: "Three lids, every size of box",
     h_p1: "Each lid has a fixed size. The height of the box is free. A shallow box for one portion and a deep box for soup take the same lid.",
     h_step1: "1. Pick a lid", h_step2: "2. Set the height of the box", h_range: "{f}: from {a} to {b}",
@@ -139,6 +150,17 @@ const T = {
     sv_intro: "Anonymous, one minute. We found no measure of how many boxes are thrown away for want of a lid. Your answers will give a first figure to show to lawmakers.",
     sv_submit: "Send my answers",
     sv_privacy: "No personal data: no name, no email address, no tracking cookie.",
+    ct_open: "Contact us",
+    ct_title: "Write to us",
+    ct_msg: "Your message",
+    ct_email: "Your email address (optional)",
+    ct_email_hint: "Only if you expect a reply.",
+    ct_privacy: "Your address is used only to reply to you. It is neither published nor passed on.",
+    ct_send: "Send",
+    ct_close: "Close",
+    ct_thanks: "Message sent. Thank you.",
+    ct_empty: "Write a message before sending.",
+    ct_bad_email: "This email address does not look valid.",
     sv_missing: "Please answer the questions shown in red.",
     sv_error: "Sending failed. Check your connection and try again.",
     res_title: "Answers so far", res_n: "{n} answers",
@@ -522,7 +544,7 @@ function closureSVG(kind) {
 function renderClosures() { document.querySelectorAll(".cl-ill").forEach(s => { s.innerHTML = closureSVG(s.dataset.cl); }); }
 
 /* ---------- Hauteur libre ---------- */
-const FMTS = [[81, 81], [162, 162], [265, 162]];
+const FMTS = [[81, 81], [162, 162], [243, 162]];
 let fmt = 0;
 function updateHeight() {
   const h = +$("hslider").value;
@@ -635,6 +657,36 @@ $("survey").addEventListener("submit", async e => {
   }
   localStorage.setItem("survey_done", "1");
   showThanks();
+});
+
+/* ---------- Contact ---------- */
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+$("ct-open").addEventListener("click", () => {
+  $("ct-form").hidden = false; $("ct-done").hidden = true; $("ct-error").hidden = true;
+  $("contact").showModal(); $("ct-msg").focus();
+});
+$("ct-close").addEventListener("click", () => $("contact").close());
+$("ct-close2").addEventListener("click", () => $("contact").close());
+$("ct-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const err = $("ct-error"), btn = $("ct-send");
+  const message = $("ct-msg").value.trim(), email = $("ct-email").value.trim();
+  err.hidden = true;
+  if (!message) { err.textContent = t("ct_empty"); err.hidden = false; return; }
+  if (email && !EMAIL_RE.test(email)) { err.textContent = t("ct_bad_email"); err.hidden = false; return; }
+  // champ piège invisible : rempli seulement par les robots, on fait comme si l'envoi avait réussi
+  if (!$("ct-hp").value) {
+    btn.disabled = true;
+    try {
+      const r = await fetch(SUPABASE_URL + "/rest/v1/contact_messages", {
+        method: "POST", headers: { ...sbHeaders(), Prefer: "return=minimal" },
+        body: JSON.stringify({ lang, message, email: email || null }) });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+    } catch (x) {
+      btn.disabled = false; err.textContent = t("sv_error"); err.hidden = false; return;
+    } finally { btn.disabled = false; }
+  }
+  $("ct-form").reset(); $("ct-form").hidden = true; $("ct-done").hidden = false;
 });
 
 let stats = null;

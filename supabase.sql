@@ -52,3 +52,23 @@ $$;
 
 revoke all on function public.survey_stats() from public;
 grant execute on function public.survey_stats() to anon;
+
+-- Messages « Nous contacter » (ajouté le 2026-11-26)
+-- Même principe : les visiteurs peuvent AJOUTER un message, personne ne peut en LIRE
+-- par l'API publique. Les messages se lisent dans Supabase > Table Editor.
+create table if not exists public.contact_messages (
+  id          bigint generated always as identity primary key,
+  created_at  timestamptz not null default now(),
+  lang        text not null check (lang in ('fr', 'en')),
+  message     text not null check (char_length(btrim(message)) between 1 and 2000),
+  email       text check (email is null or (char_length(email) <= 254 and email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'))
+);
+
+alter table public.contact_messages enable row level security;
+
+drop policy if exists "anon can insert" on public.contact_messages;
+create policy "anon can insert" on public.contact_messages
+  for insert to anon with check (true);
+
+revoke all on public.contact_messages from anon, authenticated;
+grant insert (lang, message, email) on public.contact_messages to anon;
