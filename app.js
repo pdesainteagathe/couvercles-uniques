@@ -44,8 +44,8 @@ const T = {
     idea_p2: "La hauteur, les matériaux, les couleurs, le système de fermeture et le prix restent au choix des fabricants.",
     idea_scope: "Seules les boîtes de conservation des aliments sont concernées. Les bocaux à couvercle vissé, les bouteilles, les gourdes et les emballages vendus pleins restent hors du champ.",
     idea_ikea: "IKEA ferme déjà ses boîtes de 1 litre en plastique et en verre avec le même couvercle.", idea_ikea_src: "Voir le produit",
-    idea_note: "Proposition de départ, ouverte à discussion. UE-2 et UE-3 reprennent deux formats Gastronorm, utilisés dans les cuisines professionnelles depuis 1964. UE-1, pour les sauces et les portions, est le quart de UE-2. Les trois se combinent sur un plateau sans place perdue.",
-    tray_caption: "plateau de 53 × 32,5 cm, sans place perdue",
+    idea_note: "Proposition de départ, ouverte à discussion. UE-3 reprend un format Gastronorm, utilisé dans les cuisines professionnelles depuis 1964. UE-2 est un carré de même largeur. UE-1, pour les sauces et les portions, est le quart de UE-2. Les formats carrés se ferment dans n'importe quel sens.",
+    tray_caption: "plateau Gastronorm de 53 × 32,5 cm",
     h_title: "Trois couvercles, tous les volumes",
     h_p1: "Chaque couvercle a une taille fixe. La hauteur de la boîte est libre. Une boîte basse pour une portion et une boîte haute pour une soupe prennent le même couvercle.",
     h_step1: "1. Choisissez un couvercle", h_step2: "2. Réglez la hauteur de la boîte", h_range: "{f} : de {a} à {b}",
@@ -120,8 +120,8 @@ const T = {
     idea_p2: "Height, materials, colours, closing system and price remain up to each manufacturer.",
     idea_scope: "Only food storage boxes are concerned. Screw-top jars, bottles, flasks and packaging sold full stay out of scope.",
     idea_ikea: "IKEA already closes its 1-litre plastic and glass boxes with the same lid.", idea_ikea_src: "See the product",
-    idea_note: "Starting proposal, open for discussion. UE-2 and UE-3 follow two Gastronorm sizes, used in professional kitchens since 1964. UE-1, for sauces and portions, is a quarter of UE-2. The three combine on a tray with no wasted space.",
-    tray_caption: "53 × 32.5 cm tray, no wasted space",
+    idea_note: "Starting proposal, open for discussion. UE-3 follows a Gastronorm size, used in professional kitchens since 1964. UE-2 is a square of the same width. UE-1, for sauces and portions, is a quarter of UE-2. Square formats close either way round.",
+    tray_caption: "53 × 32.5 cm Gastronorm tray",
     h_title: "Three lids, every size of box",
     h_p1: "Each lid has a fixed size. The height of the box is free. A shallow box for one portion and a deep box for soup take the same lid.",
     h_step1: "1. Pick a lid", h_step2: "2. Set the height of the box", h_range: "{f}: from {a} to {b}",
@@ -522,7 +522,7 @@ function closureSVG(kind) {
 function renderClosures() { document.querySelectorAll(".cl-ill").forEach(s => { s.innerHTML = closureSVG(s.dataset.cl); }); }
 
 /* ---------- Hauteur libre ---------- */
-const FMTS = [[88, 81], [176, 162], [265, 162]];
+const FMTS = [[81, 81], [162, 162], [265, 162]];
 let fmt = 0;
 function updateHeight() {
   const h = +$("hslider").value;
