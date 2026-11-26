@@ -44,7 +44,7 @@ const T = {
     idea_p2: "La hauteur, les matériaux, les couleurs, le système de fermeture et le prix restent au choix des fabricants.",
     idea_scope: "Seules les boîtes de conservation des aliments sont concernées. Les bocaux à couvercle vissé, les bouteilles, les gourdes et les emballages vendus pleins restent hors du champ.",
     idea_ikea: "IKEA ferme déjà ses boîtes de 1 litre en plastique et en verre avec le même couvercle.", idea_ikea_src: "Voir le produit",
-    idea_note: "Proposition de départ, ouverte à discussion. Les dimensions reprennent celles du Gastronorm, utilisé dans les cuisines professionnelles depuis 1964 : elles se combinent sur un plateau sans place perdue.",
+    idea_note: "Proposition de départ, ouverte à discussion. UE-2 et UE-3 reprennent deux formats Gastronorm, utilisés dans les cuisines professionnelles depuis 1964. UE-1, pour les sauces et les portions, est le quart de UE-2. Les trois se combinent sur un plateau sans place perdue.",
     tray_caption: "plateau de 53 × 32,5 cm, sans place perdue",
     h_title: "Trois couvercles, tous les volumes",
     h_p1: "Chaque couvercle a une taille fixe. La hauteur de la boîte est libre. Une boîte basse pour une portion et une boîte haute pour une soupe prennent le même couvercle.",
@@ -120,7 +120,7 @@ const T = {
     idea_p2: "Height, materials, colours, closing system and price remain up to each manufacturer.",
     idea_scope: "Only food storage boxes are concerned. Screw-top jars, bottles, flasks and packaging sold full stay out of scope.",
     idea_ikea: "IKEA already closes its 1-litre plastic and glass boxes with the same lid.", idea_ikea_src: "See the product",
-    idea_note: "Starting proposal, open for discussion. The dimensions follow Gastronorm, used in professional kitchens since 1964: they combine on a tray with no wasted space.",
+    idea_note: "Starting proposal, open for discussion. UE-2 and UE-3 follow two Gastronorm sizes, used in professional kitchens since 1964. UE-1, for sauces and portions, is a quarter of UE-2. The three combine on a tray with no wasted space.",
     tray_caption: "53 × 32.5 cm tray, no wasted space",
     h_title: "Three lids, every size of box",
     h_p1: "Each lid has a fixed size. The height of the box is free. A shallow box for one portion and a deep box for soup take the same lid.",
@@ -522,7 +522,7 @@ function closureSVG(kind) {
 function renderClosures() { document.querySelectorAll(".cl-ill").forEach(s => { s.innerHTML = closureSVG(s.dataset.cl); }); }
 
 /* ---------- Hauteur libre ---------- */
-const FMTS = [[176, 108], [176, 162], [265, 162]];
+const FMTS = [[88, 81], [176, 162], [265, 162]];
 let fmt = 0;
 function updateHeight() {
   const h = +$("hslider").value;
@@ -541,8 +541,9 @@ function updateHeight() {
   });
   // même rendu que l'animation : empreinte arrondie, couvercle à rebord descendant, pâtes dedans
   const floor = 280, X = 285;
-  const b = boxSVG({ X, Yfloor: floor, L, W, H: h, r: 20, mat: "plastic", food: "pasta" });
-  const lid = lidSVG({ L: L + 8, W: W + 8, r: 24, t: 6, sk: 11, col: LID.std });
+  const rb = Math.min(20, Math.round(W * 0.15));   // petit format : coins moins arrondis
+  const b = boxSVG({ X, Yfloor: floor, L, W, H: h, r: rb, mat: "plastic", food: "pasta" });
+  const lid = lidSVG({ L: L + 8, W: W + 8, r: rb + 4, t: 6, sk: 11, col: LID.std });
   // cotes : coins de l'empreinte au sol (avant-gauche, avant-droit, arrière-droit)
   const fl = [X - L / 2 - W / 2 * KX, floor], fr = [X + L / 2 - W / 2 * KX, floor], br = [X + L / 2 + W / 2 * KX, floor + W * KY];
   const nf0 = new Intl.NumberFormat(lang === "fr" ? "fr-FR" : "en-GB");
@@ -552,14 +553,16 @@ function updateHeight() {
   const xH = fl[0] - 16;                       // hauteur, à gauche de l'arête avant gauche
   const ang = Math.atan2(br[1] - fr[1], br[0] - fr[0]) * 180 / Math.PI;
   const mx = (fr[0] + br[0]) / 2 + ox + 10, my = (fr[1] + br[1]) / 2 + oy + 10;
+  const sh = L < 130 ? 16 : 0;                // petit format : décale la cote de largeur le long de l'arête
+  const mxs = mx + sh * Math.cos(ang * Math.PI / 180), mys = my + sh * Math.sin(ang * Math.PI / 180);
   $("hdraw").innerHTML = b.svg + `<g transform="translate(${b.cx} ${b.cy})">${lid}</g>
     <g class="dim">
       <path class="ext" d="M${R1(fl[0])} ${floor + 3} V${yL + 4} M${R1(fr[0])} ${floor + 3} V${yL + 4}"/>
       <path class="dl" d="M${R1(fl[0])} ${yL} H${R1(fr[0])}" marker-start="url(#arr)" marker-end="url(#arr)"/>
-      <text class="hdim" x="${R1((fl[0] + fr[0]) / 2)}" y="${yL + 18}">${lab("dim_len", L)}</text>
+      <text class="hdim${L < 130 ? " end" : ""}" x="${R1(L < 130 ? fr[0] : (fl[0] + fr[0]) / 2)}" y="${yL + 18}">${lab("dim_len", L)}</text>
       <path class="ext" d="M${R1(fr[0] + 3)} ${R1(fr[1] + 2)} L${R1(fr[0] + ox + 3)} ${R1(fr[1] + oy + 2)} M${R1(br[0] + 3)} ${R1(br[1] + 2)} L${R1(br[0] + ox + 3)} ${R1(br[1] + oy + 2)}"/>
       <path class="dl" d="M${R1(fr[0] + ox)} ${R1(fr[1] + oy)} L${R1(br[0] + ox)} ${R1(br[1] + oy)}" marker-start="url(#arr)" marker-end="url(#arr)"/>
-      <text class="hdim" transform="translate(${R1(mx)} ${R1(my)}) rotate(${R1(ang)})">${lab("dim_wid", W)}</text>
+      <text class="hdim" transform="translate(${R1(mxs)} ${R1(mys)}) rotate(${R1(ang)})">${lab("dim_wid", W)}</text>
       <path class="ext" d="M${R1(fl[0] - 3)} ${floor} H${R1(xH - 4)} M${R1(fl[0] - 3)} ${floor - h} H${R1(xH - 4)}"/>
       <path class="dl strong" d="M${R1(xH)} ${floor} V${floor - h}" marker-start="url(#arrS)" marker-end="url(#arrS)"/>
       <text class="hdim strong end" x="${R1(xH - 8)}" y="${R1(floor - h / 2 - 3)}">${t("dim_h")}</text>
